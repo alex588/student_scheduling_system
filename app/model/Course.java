@@ -62,12 +62,12 @@ public class Course {
 		return courseList;
 
 	}
+
 	public static Course getById(Integer id) {
 		ECourse course = Ebean.find(ECourse.class, id);
 		return wrap(course);
 
 	}
-	
 
 	static Course wrap(ECourse ecourse) {
 		Course course = new Course();
@@ -79,9 +79,9 @@ public class Course {
 		return course == null ? null : course.entity;
 	}
 
-	public static Course create(Prefix course_prefix,
-			Integer course_number, String course_title, Integer course_credits,
-			Integer course_level, PreRequisite prereq, CoRequisite coreq) {
+	public static Course create(Prefix course_prefix, Integer course_number,
+			String course_title, Integer course_credits, Integer course_level,
+			PreRequisite prereq, CoRequisite coreq) {
 		Course course = new Course();
 		ECourse newCourse = new ECourse();
 		newCourse.setCourse_prefix(Prefix.unwrap(course_prefix));
@@ -92,7 +92,7 @@ public class Course {
 
 		newCourse.setPrereq(PreRequisite.unwrap(prereq));
 		newCourse.setCoreq(CoRequisite.unwrap(coreq));
-		
+
 		Ebean.save(newCourse);
 		course.entity = newCourse;
 		return course;
@@ -119,13 +119,12 @@ public class Course {
 		Ebean.save(entity);
 	}
 
-	
 	public void setCoreq(CoRequisite coreq) {
 		entity.setCoreq(CoRequisite.unwrap(coreq));
 		// save in database
 		Ebean.save(entity);
 	}
-	
+
 	public Integer getId() {
 		return entity.getCourse_id();
 	}
@@ -159,18 +158,24 @@ public class Course {
 
 	/**
 	 * 
-	 * @param prefix - pass the prefix object
-	 * @param course - pass the course object
-	 * @return  - return a concatentation of the string and course eg. (CS451)
+	 * @param prefix
+	 *            - pass the prefix object
+	 * @param course
+	 *            - pass the course object
+	 * @return - return a concatentation of the string and course eg. (CS451)
 	 */
-	
+
 	public static String getPrefixCourseNo(Prefix prefix, Course course) {
 		return prefix.getName().toString() + course.getCourseNo().toString();
 	}
 
 	public Boolean isAvailable(Semester sem, Integer year) {
+		Term inputTerm = Term.create(sem, year);
 		for (ECourseAvailability record : this.entity.getAvailableCourse()) {
-			if (record.semester.equals(sem) && record.semester.equals(year))
+			Term availableTerm = Term.create(
+					Semester.wrap(record.getSemester()), record.getYear());
+
+			if (inputTerm.equals(availableTerm))
 				return true;
 		}
 		return false;

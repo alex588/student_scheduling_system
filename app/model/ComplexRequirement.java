@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.avaje.ebean.Ebean;
@@ -68,16 +69,30 @@ public class ComplexRequirement extends Requirement {
 	}
 
 	public List<RequirementFormulaNode> getChildrenNodes() {
-		// TODO: implement it.
-		return Lists.newArrayList();
+		
+		List<RequirementFormulaNode> nodeList = new ArrayList<RequirementFormulaNode>();
+		for (ERequirementFormula eachChild : this.entity.getChildren()){
+			RequirementFormulaNode node = new RequirementFormulaNode(Requirement.wrap(eachChild.getChild()), eachChild.getRf_is_positive());
+			nodeList.add(node);
+		}
+		return nodeList;
 	}
 
 	@Override
+	//TODO: TEST THIS!!!!!
 	public List<Course> getCourses() {
-		// TODO implement deep-first-search traverse of the requirements tree
+		// TODO implement depth-first-search traverse of the requirements tree
 		// and
 		// collect all courses from all simple requirements.
-		return Lists.newArrayList();
-	}
+		List<Course> res = new ArrayList<Course>();
 
+		for (ERequirementFormula eachChild : this.entity.getChildren()){
+			Requirement req = Requirement.wrap(eachChild.getChild());
+			res.addAll(req.getCourses());
+		}
+		return res;
+	}
+		
+		
+		
 }
