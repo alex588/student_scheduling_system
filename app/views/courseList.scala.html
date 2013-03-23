@@ -1,0 +1,49 @@
+
+@import model.Course
+@import model.Prefix
+
+@admin("Course List") {
+
+
+
+    <div id="breadcrumbs">
+    	<a href="/">Home</a> > <a href="">Courses</a><br>
+	</div>
+	<div id="content">
+		<div id="courseList">
+			<h2>Courses:</h2>
+			<a href="/courses/addCoursePage/">Add New Course</a><br><br>			
+			
+			<table border="1">
+				<tr>
+					<td>Edit</td>
+					<td>Delete</td>
+					<td>Course Number</td>
+					<td>Title</td>
+					<td>Prereqs</td>
+					<td>Coreqs</td>
+					<td>Credits</td>
+				</tr>
+				@for(c <- Course.getAll()){
+					<tr>					
+						<td><a href="/courses/editPage/@c.getId()" class="popup2">Edit</a></td>
+						<td>Form</td>
+						<td>@for(p <- Prefix.getAll()){
+							@if(p.getId() == c.getPrefixId()){
+								@p.getName()@c.getCourseNo()
+							}
+						}</td>
+						<td>@c.getTitle()</td>
+						<!-- replace getId with getPrereq() and getCoreq()-->
+						<td>@c.getId()</td>
+						<td>@c.getId()</td>
+						<td>@c.getCredits()</td>
+					</tr>
+				}
+			</table>
+		</div>
+	
+	</div>
+    
+    
+}

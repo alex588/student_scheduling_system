@@ -1,0 +1,1 @@
+drop database student_scheduling_system;

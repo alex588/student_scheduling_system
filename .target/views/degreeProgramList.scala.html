@@ -1,0 +1,30 @@
+@import model.DegreeProgram
+
+@admin("Degree Program List") {
+    <div id="breadcrumbs">
+    	<a href="/">Home</a> > <a href="">Degree Programs</a><br>
+	</div>
+	<div id="content">
+		<div id="degreeProgramList">
+			<h2>Degree Programs:</h2>
+			<a href="/degreePrograms/addDegreeProgramPage/">Add New Degree Program</a><br><br>
+			<table border="1">
+				<tr>
+					<td>Edit</td>
+					<td>Delete</td>
+					<td>Name</td>
+				</tr>
+				@for(c <- DegreeProgram.getAll()){
+					<tr>
+						<td><a href="/degreePrograms/edit/@c.getId()">Edit</a></td>
+						<td>Form</td>
+						<td>@c.getName()</td>
+					</tr>
+				}
+			</table>
+		</div>
+	
+	</div>
+    
+    
+}

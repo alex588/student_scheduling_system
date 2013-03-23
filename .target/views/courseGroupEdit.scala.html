@@ -1,0 +1,46 @@
+@(courseGroupEditForm: Form[views.forms.CourseGroupEditForm], courseGroup: model.CourseGroup)
+
+@admin("Course Add") {
+    <div id="breadcrumbs"><a href="/">Home</a>
+&gt; <a href="/course-groups/">Course Groups</a>
+&gt; <a href="">Course Group Add</a><br>
+<br>
+<br>
+</div>
+<div id="content">
+
+  <table border="0">
+    <tbody>
+      <form name="courseGroupEditForm" action="/courseGroups/@courseGroup.getId()"
+ method="post">
+       <tr>
+        <td>Name:</td>
+        <td colspan="1"><input size="30" name="name" value="@courseGroup.getTitle()"></td>
+      </tr>
+      <tr>
+        <td>Description:</td>
+        <td colspan="1"><input size="30" name="description"></td>
+      </tr>
+      <tr>
+        <td><input name="groupType" value="courseList"
+ type="radio">List of Courses</td>
+        <td colspan="1"><input type=text name="courseNumbers" size="30"</td>
+      </tr>
+      <tr>
+        <td "><input
+ name="groupType" value="groupList" type="radio">Combination
+of Groups</td>
+        <td "><input size="60"
+ name="groupComboBool"></td>
+      </tr>
+      <tr>
+        <td colspan="3" align="center"><input
+ type="submit"></td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="text-align: center;"></div>
+</form>
+</div>
+      
+}

@@ -1,0 +1,55 @@
+@(degreeProgramForm: Form[views.forms.DegreeProgramForm], requirementsInDegreeHidden: String, requirementsInDegreeTextBox: String)
+@import model.Requirement
+
+@admin("Degree Program Add") {
+    <div id="breadcrumbs"><a href="/">Home</a>
+&gt; <a href="/degreePrograms/">Degree Programs</a>
+&gt; <a href="">Degree Program Add</a><br>
+<br>
+<br>
+</div>
+<div id="content">
+<form name="degreeProgram"
+ action="/degreePrograms/generateForm" method="post"><br>
+
+  <table style="width: 644px; height: 476px;" border="0">
+    <tbody>
+      <tr>
+        <td>Requirement to Add:</td>
+        <td><select name="requirementIdAdd">
+        @for(c <- Requirement.getAll()){
+			<option value="c.getId()">c.getName()</option>
+		}
+        </select>@Html(requirementsInDegreeHidden)</td>
+      </tr>
+      <tr>
+        <td>Add to Degree!</td>
+        <td><input value="Add To Degree" type="submit">
+        </td>
+      </tr>
+      </form>
+      <form name="degreeProgramForm" action="/degreePrograms/add/"
+ method="post">
+       <tr>
+        <td>Name:</td>
+        <td colspan="1"><input size="30" name="name"></td>
+      </tr>
+      <tr>
+      	<td></td><td>@Html(requirementsInDegreeTextBox)</td>
+      </tr>
+	 <tr>
+        <td colspan="3" align="center"><input
+ type="submit"></td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="text-align: center;"></div>
+</form>
+</div>
+
+
+
+    
+    
+    
+}

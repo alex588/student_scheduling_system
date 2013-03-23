@@ -1,0 +1,30 @@
+@(selectedDegreeForm: Form[views.forms.SelectedDegreeForm])
+
+@main("Student Degree Selection") {
+	<div id="breadcrumbs">
+    	<a href="/">Home</a> > <a href="/student-degree-programs/">Degree Selection</a><br>
+	</div>
+	
+	<div id="degreeForm">
+		<p>
+			Degree Selection<br>
+			<form name="selectedDegreeForm" action="/student-degree-programs/" method="post">
+			<p>
+				Desired Degree:
+				<select>
+					<option value="0">Computer Science CS105</option>
+					<option value="1">Computer Science CS115</option>
+					<option value="2">Computer Security</option>
+				</select><br>
+				Year of Entry(Degree Catalog Year): <input type="text" name="degreeYear"><Br>
+				(ie. I entered my degree in 2008)<br>
+				Desired Number of Semesters: <input type="text" name="semesterNum"><Br>
+				(ie. I want to graduate in 8 more semesters)<br>
+				<input type="submit">
+			</p>
+			</form>
+		</p>
+	</div>
+    
+    
+}

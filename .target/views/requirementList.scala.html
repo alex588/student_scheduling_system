@@ -1,0 +1,29 @@
+@import model.Requirement
+
+@admin("Course List") {
+    <div id="breadcrumbs">
+    	<a href="/">Home</a> > <a href="/requirements/">Requirements</a><br>
+	</div>
+	<div id="content">
+		<div id="requirementList">
+			<h2>Requirements:</h2>
+			<a href="/requirements/addRequirementPage/">Add New Requirement</a><br><br>
+			<table border="1">
+				<tr>
+					<td>Edit</td>
+					<td>Delete</td>
+					<td>Requirement</td>
+				</tr>
+				@for(c <- Requirement.getAll()){
+					<tr>
+						<td><a href="/requirements/edit/c.getId()">Edit</a></td>
+						<td>form </td>
+						<td>c.getName()</td>
+					</tr>
+				}
+			</table>
+		</div>	
+	</div>
+    
+    
+}

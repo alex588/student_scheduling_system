@@ -1,0 +1,89 @@
+@(requirementForm: Form[views.forms.RequirementForm])
+@import model.CourseGroup
+
+@admin("Requirement Add") {
+    <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title></title>
+</head>
+<body>
+<div id="breadcrumbs">
+<a href="/">Home</a> &gt; <a
+ href="/requirements/">Requirements</a>
+&gt; <a href="">Requirement Add</a><br>
+</div>
+<div id="content">
+<form name="requirementForm" action="/requirements/add/"
+ method="post">
+  <table style="width: 644px; height: 476px;" border="0">
+    <tbody>
+      <tr>
+        <td>Name:</td>
+        <td colspan="3"><input name="name" colspan="2"></td>
+      </tr>
+      <tr>
+        <td><input checked="checked"
+ name="requirementType" value="simple" type="radio">Simple</td>
+        <td colspan="2">
+        <select name="courseGroup">
+        @for(c <- CourseGroup.getAll()){
+			<option value="c.getId()">c.getName()</option>
+		}
+        </select>
+        <br>
+        </td>
+      </tr>
+      <tr>
+        <td><input name="requirementType"
+ value="prerequisite" type="radio">Degree Specific
+Prerequisite</td>
+        <td colspan="2"><input name="degreePrereq"
+ size="30" colspan="2"></td>
+      </tr>
+      <tr>
+        <td><input name="requirementType"
+ value="corequisite" type="radio">Degree Specific
+Corequisite<br>
+        </td>
+        <td colspan="2"><input name="degreCoreq"
+ size="30" colspan="2"></td>
+      </tr>
+      <tr>
+        <td><input name="requirementType"
+ value="semester" type="radio">Predefined Semester</td>
+        <td><input size="3" name="semesterCourse"></td>
+        <td>
+        <select name="semester">
+        <option>FALL</option>
+        <option>WINTER</option>
+        <option>SPRING</option>
+        <option>SUMMER I</option>
+        <option>SUMMER II</option>
+        </select>
+        </td>
+      </tr>
+      <tr>
+        <td><input name="requirementType"
+ value="combination" type="radio">Combination</td>
+        <td><input name="comboBool" size="30" colspan="2"></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td colspan="6" align="center"><input
+ type="submit"></td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="text-align: center;"></div>
+</form>
+</div>
+</body>
+</html>
+
+    
+    
+    
+}

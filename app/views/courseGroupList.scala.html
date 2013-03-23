@@ -1,0 +1,34 @@
+@import model.CourseGroup 
+
+@admin("Course List") {
+<div id="breadcrumbs">
+<a href="/">Home</a> &gt; <a href="">Course
+Groups</a><br>
+</div>
+<div id="content">
+<div id="courseList">
+<h2>Course Groups:</h2>
+<a href="/course-groups/addCourseGroupPage/">Add New Course Group</a><br>
+<br>
+<table border="1">
+  <tbody>
+    <tr>
+    	<td>Edit</td>
+    	<td>Delete</td>
+      	<td>Id</td>
+      	<td>Title</td>
+    </tr>
+@for(c <- CourseGroup.getAll()){
+    <tr>
+    	<td><a href="/course-groups/edit/c.getId()">Edit</a></td>
+    	<td>Form</td>
+        <td>@c.getId()</td>
+        <td>@c.getTitle()</td>
+    </tr>
+}
+  </tbody>
+</table>
+</div>
+</div>
+
+}
