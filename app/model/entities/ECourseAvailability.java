@@ -20,11 +20,11 @@ public class ECourseAvailability extends Model {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne//(fetch=FetchType.LAZY)
 	@JoinColumn(name="ca_semester_id_pk_fk")
 	public ESemester semester;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne//(fetch=FetchType.LAZY)
 	@JoinColumn(name="ca_course_id_pk_fk")
 	public ECourse course;
 	

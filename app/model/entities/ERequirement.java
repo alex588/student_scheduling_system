@@ -121,20 +121,20 @@ public class ERequirement extends Model {
 		this.courseGroup = courseGroup;
 	}
 
-	public List<ERequirementFormula> getParent() {
-		return children;
-	}
-
-	public List<ERequirementFormula> getChild() {
+	public List<ERequirementFormula> getParents() {
 		return parents;
 	}
 
-	public void setParent(List<ERequirementFormula> parent) {
-		this.children = parent;
+	public List<ERequirementFormula> getChildren() {
+		return children;
 	}
 
-	public void setChild(List<ERequirementFormula> child) {
-		this.parents = child;
+	public void setParents(List<ERequirementFormula> parents) {
+		this.parents = parents;
+	}
+
+	public void setChildren(List<ERequirementFormula> children) {
+		this.children = children;
 	}
 
 	
