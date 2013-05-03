@@ -3,38 +3,41 @@ package model.entities;
 import javax.persistence.*;
 import play.db.ebean.Model;
 
+/**
+ * 
+ * @author Mihir Daptardar
+ * 
+ */
 @Entity
-@Table(name="prefixes")
+@Table(name = "prefixes")
 public class EPrefix extends Model {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	
 	@Id
-	@Column(name="prefix_id_pk")
-	public Integer prefix_id;
-	public String prefix_title;
-	public String prefix_full_name;
-	
-	public static Finder<Long, EPrefix> find = new Finder<Long, EPrefix>(Long.class, EPrefix.class);
+	@Column(name = "prefix_id_pk")
+	private Integer prefix_id;
+	@Column(name = "prefix_title")
+	private String prefixTitle;
+	@Column(name = "prefix_full_name")
+	private String prefixFullName;
 
-	public void setPrefixId(Integer prefix_id) {
-		this.prefix_id = prefix_id;
+	public Integer getId() {
+		return prefix_id;
 	}
-	
-	public void setPrefixFullName(String prefix_full_name) { 
-		this.prefix_full_name = prefix_full_name; 
-		}
-	public void setPrefixTitle(String prefix_title) { 
-		this.prefix_title = prefix_title; 
-		}
 
-	
-	
-	public String getPrefixFullName() { return prefix_full_name; }
-	public String getPrefixTitle() { return prefix_title; }
-	public Integer getPrefixId() {return prefix_id; }
-	
-	
+	public void setPrefixFullName(String prefixFullName) {
+		this.prefixFullName = prefixFullName;
+	}
+
+	public void setPrefixTitle(String prefixTitle) {
+		this.prefixTitle = prefixTitle;
+	}
+
+	public String getPrefixFullName() {
+		return prefixFullName;
+	}
+
+	public String getPrefixTitle() {
+		return prefixTitle;
+	}
+
 }

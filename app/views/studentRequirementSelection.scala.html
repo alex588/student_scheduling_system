@@ -1,0 +1,214 @@
+@(studentRequirementsForm: Form[views.forms.StudentRequirementForm], degreeProgram: model.DegreeProgram, enterYear: Integer, numberOfSemester: Integer, terms: List[model.Term])
+@import model.SimpleRequirement;
+@import model.ComplexRequirement;
+@import model.Requirement;
+@import model.CourseGroup;
+@import play.api.templates.Html;
+@import model.Semester;
+@import controllers.util.Converter;
+@import model.Junction;
+@import java.util.List;
+
+@main("Student Requirement Selection") {
+<div id="breadcrumbs">
+	<a href="">Requirement Selection</a><br> 
+</div>
+
+<script language="JavaScript">
+function test(count){
+if(document.getElementById('isTaken[' + count + ']').checked) {
+	document.getElementById('course[' + count + ']').checked = true;
+	document.getElementById('term[' + count + ']').disabled = true;
+	document.getElementById('location[' + count + ']').disabled = true;
+	document.getElementById('course[' + count + ']').disabled = false;
+
+}else {
+	document.getElementById('term[' + count + ']').disabled = false;
+	document.getElementById('location[' + count + ']').disabled = false;
+	document.getElementById('course[' + count + ']').disabled = false;  
+	document.getElementById('course[' + count + ']').checked = false;
+}
+}
+</script>
+
+
+<div id="studentRequirementsForm">
+	<p>
+		Degree Selection<br>
+		<form name="studentRequirementsForm" action="/student-degree-program-requirements/" method="post">
+		<input type="hidden" name="numberOfSemesters" value="@numberOfSemester.toString()"/>
+		<input type="hidden" name="enterYear" value="@enterYear.toString()"/>
+		<p>Listed below are all of the requirements for @degreeProgram.getName(). Please note all
+		courses taken. You may select courses that you wish to take, whether you would like to 
+		take them online and during what semester and year you want to take them. If you leave the
+		course blank or the semester/year blank the system will decide for you. When finished please
+		click the submit button and wait for the system to return your schedule.
+	</p>
+	
+	<p>
+		This table is for selecting how many classes you would like  to take during each term<br>
+		you are attending Stevens. Select 0 for Min and Max if you do not wish to take any courses<br>
+		that term.	
+	<table>
+		<tr>
+			<td>Term</td>
+			<td>Min Courses</td>
+			<td>Max Courses</td>
+		</tr>
+		@{var counter = 0; var cont:Html = Html("");
+			for(t <- terms){
+				cont += Html("<tr><td>");
+				cont += Html(t.toString());
+				cont += Html("</td><td><select name=\"termMin[");
+				cont += Html(counter.toString());
+				cont += Html("]\"><option selected>0</option><option>1</option><option>2</option><option>3</option>");
+				cont += Html("<option>4</option><option>5</option><option>6</option><option>7</option>");
+				cont += Html("<option>8</option><option>9</option><option>10</option></select></td>");
+				cont += Html("<td><select name=\"termMax[");
+				cont += Html(counter.toString());
+				cont += Html("]\"><option>0</option><option>1</option><option>2</option><option>3</option>");
+				cont += Html("<option>4</option><option selected>5</option><option>6</option><option>7</option>");
+				cont += Html("<option>8</option><option>9</option><option>10</option></select></td></tr>");
+				counter = counter + 1;
+			}
+			cont;
+		}
+	</table>
+	</p>
+	<input type="submit">
+	<table><tr><td width="10"></td><td>
+		@{
+			var cont:Html = Html("");
+			var counter = 0;
+			for(r <- degreeProgram.getRequirements()){					
+				if(r.isSimple() == true){				
+					var simpleR:SimpleRequirement = r.asInstanceOf[SimpleRequirement];
+					cont += Html("Select ");
+					cont += Html(simpleR.getNumberOfCourses().toString());
+					cont += Html(" course/s from the ");
+					cont += Html(r.getTitle());
+					cont += Html(" requirement.");
+					cont += Html("<table border=\"1\">");
+					cont += Html("<tr><td>Course</td><td>Taken?</td><td>Location</td><td>Term</td><td>Course Description</td></tr>");
+					var cg:CourseGroup = simpleR.getCourseGroup();
+					for(c <- simpleR.getCourses()){						
+						cont += Html("<tr>");
+						cont += Html("<td><input id=\"course[" + counter.toString() + "]\" name=\"course[");
+						cont += Html(counter.toString());
+						cont += Html("]\" value=\"");
+						cont += Html(c.toString());
+						cont += Html("\" type=\"checkbox\">");
+						cont += Html(c.toString());
+						cont += Html("</td>");
+						
+						cont += Html("<td><input onClick=\"test(\'" + counter.toString() + "\');\" name=\"isTaken[");
+						cont += Html(counter.toString());
+						cont += Html("]\" value=\"true\" type=\"checkbox\" id=\"isTaken[" + counter.toString() + "]\"></td>");
+						
+						
+						cont += Html("<td><select id=\"location[" + counter.toString() + "]\"name=\"location[");
+						cont += Html(counter.toString());
+						cont += Html("]\" ><option>OnCampus</option><option>OnLine</option><option>Both</option></td>");
+						
+						cont += Html("<td><select id=\"term[" + counter.toString() + "]\" name=\"term[");
+						cont += Html(counter.toString());
+						cont += Html("]\"><option></option>");
+						for(t <- terms){
+							cont += Html("<option>");
+							cont += Html(t.toString());
+							cont += Html("</option>");
+						}
+						cont += Html("</select></td>");	
+						cont += Html("<td>" + c.getTitle() + "</td>");					
+						cont += Html("</tr>");
+						counter = counter + 1;
+					}		
+					cont += Html("</table><br><br>");					
+				}else{	
+					var complexR:ComplexRequirement = r.asInstanceOf[ComplexRequirement];
+					
+					cont += Html("Select from following Requirements for ");
+					cont += Html(complexR.getTitle());
+					cont += Html("<br>");
+					cont += Html("<table><tr><td>");
+					
+					for(str <- Converter.breakString(Converter.convertRequirementComboToSimpleRequirements(complexR))){
+						if(str.equals(")")){
+							cont += Html("</tr></table></td>");
+						}else if(str.equals("(")){
+							cont += Html("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<table><tr><td>");
+						}else if(str.equals(Junction.AND.toString()) || str.equals(Junction.OR.toString())){
+						    cont += Html("<tr><td></td><td>Requirement Junction: ");							
+							cont += Html(str);
+							cont += Html("<br></td>");
+						}else{
+							cont += Html("<tr><td width=\"20\"></td><td>");
+							var normR:Requirement = Requirement.getByAbbreviation(str);
+							var simpleR:SimpleRequirement = normR.asInstanceOf[SimpleRequirement];
+							cont += Html("Select ");
+							cont += Html(simpleR.getNumberOfCourses().toString());
+							cont += Html(" course/s from the ");
+							cont += Html(simpleR.getTitle());
+							cont += Html(" requirement.");
+							cont += Html("<table border=\"1\">");
+							cont += Html("<tr><td>Course</td><td>Taken?</td><td>Location</td><td>Term</td><td>Course Description</td></tr>");
+							var cg:CourseGroup = simpleR.getCourseGroup();
+							for(c <- simpleR.getCourses()){					
+								cont += Html("<tr>");
+								cont += Html("<td><input id=\"course[" + counter.toString() + "]\" name=\"course[");
+								cont += Html(counter.toString());
+								cont += Html("]\" value=\"");
+								cont += Html(c.toString());
+								cont += Html("\" type=\"checkbox\">");
+								cont += Html(c.toString());
+								cont += Html("</td>");
+								
+								cont += Html("<td><input onClick=\"test(\'" + counter.toString() + "\');\" name=\"isTaken[");
+								cont += Html(counter.toString());
+								cont += Html("]\" value=\"true\" type=\"checkbox\" id=\"isTaken[" + counter.toString() + "]\" ></td>");							
+								
+								cont += Html("<td><select id=\"location[" + counter.toString() + "]\"name=\"location[");
+								cont += Html(counter.toString());
+								cont += Html("]\" ><option>OnCampus</option><option>OnLine</option><option>Both</option></td>");
+								
+								cont += Html("<td><select id=\"term[" + counter.toString() + "]\" name=\"term[");
+								cont += Html(counter.toString());
+								cont += Html("]\"><option></option>");
+								for(t <- terms){
+									cont += Html("<option>");
+									cont += Html(t.toString());
+									cont += Html("</option>");
+								}
+								cont += Html("</select></td>");	
+								cont += Html("<td>" + c.getTitle() + "</td>");	
+								cont += Html("</tr>");
+								counter = counter + 1;
+							}		
+							cont += Html("</table></td></tr>");	
+						}
+					}
+					cont += Html("</table><br><br>");
+				}
+			}
+			cont;
+		}		
+	</td></tr></table>
+	<input type="hidden" name="degreeProgramId" value="@degreeProgram.getId()"/>
+	<input type="submit">
+	</form>
+	<script language="JavaScript">
+	function calc(){
+	var x = document.getElementByName('isTaken[]').checked;
+	var y = document.getElementById('takenc').checked;
+	if(x) {
+		alert("ok");
+	}
+	}
+</script>
+	
+	
+	</p>
+</div>
+    
+    
+}

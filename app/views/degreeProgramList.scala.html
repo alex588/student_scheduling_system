@@ -1,13 +1,41 @@
 @import model.DegreeProgram
 
 @admin("Degree Program List") {
+<script>
+function disp_confirm(id)
+{
+	var r=confirm("Do you want to continue and delete this?" )
+	if (r==true)
+ 	 {
+		  $.ajax({
+                url: '/degree-programs/'+id,
+                type: 'DELETE',
+                success: function(result) {
+                	location.reload(true);
+                }
+            });
+ 	 }
+	else
+	  {
+	  }
+}
+function disp_confirm_edit(id)
+{
+  var myForm = document.createElement("form");
+  myForm.method="GET" ;
+  myForm.action = "/degree-programs/edit-degree-program-page/" + id;
+  document.body.appendChild(myForm) ;
+  myForm.submit() ;
+  document.body.removeChild(myForm) ;
+}
+</script>
     <div id="breadcrumbs">
-    	<a href="/">Home</a> > <a href="">Degree Programs</a><br>
+<a href="">Degree Programs</a><br>
 	</div>
 	<div id="content">
 		<div id="degreeProgramList">
 			<h2>Degree Programs:</h2>
-			<a href="/degreePrograms/addDegreeProgramPage/">Add New Degree Program</a><br><br>
+			<a href="/degree-programs/addDegreeProgramPage/">Add New Degree Program</a><br><br>
 			<table border="1">
 				<tr>
 					<td>Edit</td>
@@ -16,8 +44,8 @@
 				</tr>
 				@for(c <- DegreeProgram.getAll()){
 					<tr>
-						<td><a href="/degreePrograms/edit/@c.getId()">Edit</a></td>
-						<td>Form</td>
+						<td><input type="button" onclick="disp_confirm_edit(@c.getId())" value="Edit"></td>
+						<td><input type="button" onclick="disp_confirm(@c.getId())" value="Delete"></td>
 						<td>@c.getName()</td>
 					</tr>
 				}

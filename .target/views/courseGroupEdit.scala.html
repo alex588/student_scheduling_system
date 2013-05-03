@@ -1,44 +1,116 @@
-@(courseGroupEditForm: Form[views.forms.CourseGroupEditForm], courseGroup: model.CourseGroup)
+	@(courseGroupEditForm: Form[views.forms.CourseGroupEditForm], courseGroup: model.CourseGroup)
 
-@admin("Course Add") {
-    <div id="breadcrumbs"><a href="/">Home</a>
-&gt; <a href="/course-groups/">Course Groups</a>
-&gt; <a href="">Course Group Add</a><br>
+@import model.SimpleCourseGroup;
+@import play.api.templates.Html;
+@import model.CourseGroup
+@import controllers.util.Converter
+@import model.Course;
+
+@admin("Course Edit") {
+    <div id="breadcrumbs"><a href="/course-groups/">Course Groups</a>
+&gt; <a href="">Course Group Edit</a><br>
 <br>
 <br>
 </div>
-<div id="content">
+<script language="JavaScript">
+function validate(){
+	var name=document.getElementById('name').value;
+	var simple = document.getElementById('simple').checked;	
+	var complex = document.getElementById('complex').checked;
+	var cg = document.getElementById('coursegroup').value;
+	var c =document.getElementById('course').value;
+	
+	if (name==null || name==""){
+	  alert("Name cannot be blank");
+	  return false;
+	  }
+	
+	if(simple && c==""){
+	 alert("List of Courses cannot be blank");
+	return false;	
+	}
 
-  <table border="0">
+	if(complex && cg==""){
+	 alert("Combination cannot be blank");
+	 return false;
+	}
+
+
+}
+</script>
+<div id="content">
+<table>
+<tr><td valign="top">
+  <table border="0" width="700">
     <tbody>
-      <form name="courseGroupEditForm" action="/courseGroups/@courseGroup.getId()"
- method="post">
+      <form name="courseGroupEditForm" action="/course-groups/@courseGroup.getId()" method="post" >
        <tr>
         <td>Name:</td>
         <td colspan="1"><input size="30" name="name" value="@courseGroup.getTitle()"></td>
+        </tr><td></td>
+        <td colspan="5">Name of the new Course Group</td>
       </tr>
+      @if(courseGroup.isSimple()){<tr>
+        <td><input name="groupType" value="courseList" id="simple" type="radio" checked>List of Courses</td>
+        <td colspan="1"><input type=text name="courseNumbers" size="30" id="course"
+        @if(courseGroup.isSimple()){
+        	@{
+        		/** var simpleC:SimpleCourseGroup = courseGroup.asInstanceOf[SimpleCourseGroup]; */
+        		
+        		var cont:Html = Html("value=\"");
+        		for(c <- courseGroup.getAllCourses()){
+        			cont += Html(c.toString() + ",");
+        		}
+        		cont += Html("\"");
+        		cont;
+        	}
+         }
+    	</td>
+    	</tr><td></td>
+        <td colspan="5">Course Numbers in the Course Group separated by commas ie.:<br>
+        CS115, CS225, CS135</td>
+      </tr>}
+      @if(!courseGroup.isSimple()){<tr>
+        <td "><input name="groupType" value="groupList" id="complex" type="radio" checked>Combination of Groups</td>
+        <td><input size="60" name="groupComboBool" id="coursegroup" value="@if(!courseGroup.isSimple()){@{var cont:Html = Html(Converter.convertGroupCombo(courseGroup)); cont;}}"></td>
+        </tr><td></td>
+        <td colspan="5">Boolean equation made with Course Group Abbreviations ie.:HUM100 AND HUM200</td>
+      </tr>}
       <tr>
-        <td>Description:</td>
-        <td colspan="1"><input size="30" name="description"></td>
-      </tr>
-      <tr>
-        <td><input name="groupType" value="courseList"
- type="radio">List of Courses</td>
-        <td colspan="1"><input type=text name="courseNumbers" size="30"</td>
-      </tr>
-      <tr>
-        <td "><input
- name="groupType" value="groupList" type="radio">Combination
-of Groups</td>
-        <td "><input size="60"
- name="groupComboBool"></td>
-      </tr>
-      <tr>
-        <td colspan="3" align="center"><input
- type="submit"></td>
+        <td colspan="3" align="center"><input type="submit"></td>
+        
       </tr>
     </tbody>
   </table>
+  </td><td>
+  <div style="overflow:auto;height:700px;">
+  <font color="#C8C8C8" size="2">
+  <h3>Course Group Reference<h3>
+  <table>
+  <tr><td>Abbreviation</td><td>Title</td></tr>
+  @for(c <- CourseGroup.getAll()){
+    <tr>
+        <td>@c.toString()</td>
+        <td>@c.getTitle()</td>
+    </tr>
+	}
+  </table>
+    <font color="#C8C8C8" size="2">
+  <h3>Courses Reference</h3>
+  <table>
+  	<tr><td>CourseNumber</td><td>Title</td></tr>
+	  @for(c <- Course.getAll()){
+		<tr>					
+			<td>@c.toString()</td>
+			<td>@c.getTitle()</td>		
+		</tr>
+		}
+  </table>
+  </font>
+  </div>
+  </td></tr>
+  <table>
+  </font>
   <div style="text-align: center;"></div>
 </form>
 </div>

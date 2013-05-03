@@ -1,0 +1,60 @@
+@(degreeProgramEditForm: Form[views.forms.DegreeProgramEditForm], degreeProgram: model.DegreeProgram)
+@import model.Requirement
+
+@admin("Degree Program Edit") {
+    <div id="breadcrumbs"><a href="/degree-programs/">Degree Programs</a>
+&gt; <a href="">Degree Program Edit</a><br>
+<br>
+<br>
+</div>
+<script language="JavaScript">
+function validate(){
+	var name = document.getElementById('name').value;
+	
+	if (name==null || name==""){
+	  alert("Name cannot be blank");
+	  return false;
+	  }
+
+}
+</script>
+<div id="content">
+
+  <table border="0">
+    <tbody>      
+      <form name="degreeProgramEditForm" action="/degree-programs/@degreeProgram.getId()" method="post" onSubmit="return validate();">
+       <tr>
+        <td>Name:</td>
+        <td colspan="1"><input size="30" name="name" id="name" value="@degreeProgram.getName()"></td>
+        </tr><td></td>
+        <td colspan="5">Name of the new Degree Program</td>
+      </tr>
+      <tr>
+      	<td colspan="2">Choose Requirements in Degree Program:<br><br></td>
+      </tr>
+      @for(r <- Requirement.getAllVisible()){
+      <tr>
+      	<td></td><td><input name="requirementList[@r.getId()]" value="@r.getId()" type="checkbox" 
+      	@for(req <- degreeProgram.getRequirements()){
+      		@if(req.getId().equals(r.getId())){
+      				checked
+      		}
+  		}
+  				>@r.getTitle()</td>
+      </tr>
+      }
+	 <tr>
+        <td colspan="3" align="center"><input type="submit"></td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="text-align: center;"></div>
+</form>
+</div>
+
+
+
+    
+    
+    
+}

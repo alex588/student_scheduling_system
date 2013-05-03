@@ -1,0 +1,60 @@
+@(result:model.SchedulingResult, desires: List[model.StudentDesire])
+
+@import model.Course
+
+@import java.util;
+
+@main("Student Degree Selection") {
+	<div id="breadcrumbs">
+    	<a href="/">Home</a> > <a href="/student-degree-programs/">Degree Selection</a> > <a href="">Study Plan Results</a><br>
+	</div>
+	
+	<div id="studyPlan">
+	@if(result.getIsValidPlan()){
+		Here is your completed Study Plan:
+		<br><br>Courses in <font color="red">red</font> are courses you selected.<br><br>
+		<table>
+		@{	var cont:Html = Html("");
+			
+			for(term <- result.getStudyPlan.getAllTerms()){	
+				cont += Html("<tr><td>");
+				cont += Html(term.toString());					
+				cont += Html("</td><td></td>");
+				for(course <- result.getStudyPlan.getCourseListForTerm(term)){
+					cont += Html("<td></td><td>");
+					var font = "";
+					for(desire <- desires){
+						if(course == desire.getCourse()){
+							cont += Html("<font color=\"red\">");
+							font = "</font>";
+						}
+						if(Course.Location.ONLINE == desire.getLocation()){
+						    cont += Html("<u>");
+						    font += "</u>";
+						}
+					}
+					cont += Html(course.toString());
+					cont += Html(font);
+					cont += Html("</td>");
+				}
+				cont += Html("</tr>");				
+			}				
+			cont;
+		}
+		</table>
+	}else{
+		@result.getMessage()
+		<br><br><p>
+		Study Plan Schedule was unsuccessful. No solution was found for your specific desires.<br>
+		The following reasons may be causing this:<br>
+		-Too few semesters desired<br>
+		-Classes may not be available in desired semesters<br>
+		-Prerequisites or Corequisites cannot be satisfied<br>
+		<br>Try one or more of the following to help build your schedule:<br>
+		-Relax some of your desired classes<br>
+		-Take more semesters or increase the number of courses per semester<br>
+		<br>User your browsers 'Back' button to enter new desires.<br>		
+	}
+	
+	</div>        
+}

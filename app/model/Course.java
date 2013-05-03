@@ -2,14 +2,13 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import model.entities.ECourse;
 import model.entities.ECourseAvailability;
-import model.entities.EPrereqCoreqFormula;
-
 import com.avaje.ebean.Ebean;
-import com.avaje.ebean.ExpressionList;
 
+/**
+ * @author Alexey Tregubov, Mihir Daptardar.
+ */
 public class Course {
 	private ECourse entity;
 
@@ -63,6 +62,13 @@ public class Course {
 
 	}
 
+	public static Course getByPrefixAndNumber(Prefix prefix, Integer number) {
+		ECourse ecourse = Ebean.find(ECourse.class).where()
+				.eq("course_prefix_id_fk", prefix.getId())
+				.eq("course_number", number).findList().get(0);
+		return ecourse == null ? null : wrap(ecourse);
+	}
+
 	public static Course getById(Integer id) {
 		ECourse course = Ebean.find(ECourse.class, id);
 		return wrap(course);
@@ -79,16 +85,16 @@ public class Course {
 		return course == null ? null : course.entity;
 	}
 
-	public static Course create(Prefix course_prefix, Integer course_number,
-			String course_title, Integer course_credits, Integer course_level,
+	public static Course create(Prefix coursePrefix, Integer courseNumber,
+			String courseTitle, Integer courseCredits, Integer courseLevel,
 			PreRequisite prereq, CoRequisite coreq) {
 		Course course = new Course();
 		ECourse newCourse = new ECourse();
-		newCourse.setCourse_prefix(Prefix.unwrap(course_prefix));
-		newCourse.setCourse_number(course_number);
-		newCourse.setCourse_title(course_title);
-		newCourse.setCourse_credits(course_credits);
-		newCourse.setCourse_level(course_level);
+		newCourse.setCoursePrefix(Prefix.unwrap(coursePrefix));
+		newCourse.setCourseNumber(courseNumber);
+		newCourse.setTitle(courseTitle);
+		newCourse.setCourseCredits(courseCredits);
+		newCourse.setCourseLevel(courseLevel);
 
 		newCourse.setPrereq(PreRequisite.unwrap(prereq));
 		newCourse.setCoreq(CoRequisite.unwrap(coreq));
@@ -98,92 +104,177 @@ public class Course {
 		return course;
 	}
 
-	// has to create a new entity/record/tuple in database and returns its
-	// object
+	public void update(String title, Integer courseCredits) {
 
-	public void update(String course_title, Integer course_credits) {
-
-		this.entity.setCourse_title(course_title);
-		this.entity.setCourse_credits(course_credits);
+		this.entity.setTitle(title);
+		this.entity.setCourseCredits(courseCredits);
 		this.entity.update();
 	}
 
-	static public void delete(Integer course_id) {
-		ECourse ecourse = Ebean.find(ECourse.class, course_id);
-		ecourse.delete();
+	static public void delete(Integer courseId) {
+		ECourse ecourse = Ebean.find(ECourse.class, courseId);
+		if (ecourse != null)
+			ecourse.delete();
+		return;
 	}
 
 	public void setPrereq(PreRequisite prereq) {
 		entity.setPrereq(PreRequisite.unwrap(prereq));
-		// save in database
-		Ebean.save(entity);
+		entity.update();
 	}
 
 	public void setCoreq(CoRequisite coreq) {
 		entity.setCoreq(CoRequisite.unwrap(coreq));
-		// save in database
-		Ebean.save(entity);
+		entity.update();
 	}
 
 	public Integer getId() {
-		return entity.getCourse_id();
+		return entity.getId();
 	}
 
 	public String getTitle() {
-		return entity.getCourse_title();
+		return entity.getCourseTitle();
 	}
 
 	public Integer getCredits() {
-		return entity.getCourse_credits();
-	}
-
-	public Integer getPrefixId() {
-		return entity.getCourse_prefix().getPrefixId();
+		return entity.getCourseCredits();
 	}
 
 	public Integer getCourseNo() {
-		return entity.getCourse_number();
+		return entity.getCourseNumber();
 	}
 
-	public Location getLocation() {
-		if (entity.getAvailableCourse().isEmpty()) {
-			return null;
-		} else {
-			ECourseAvailability courseAvailability = entity
-					.getAvailableCourse().get(0); // First element
-			String location = courseAvailability.getLocation();
-			return Location.getLocationForString(location);
-		}
-	}
-
-	/**
-	 * 
-	 * @param prefix
-	 *            - pass the prefix object
-	 * @param course
-	 *            - pass the course object
-	 * @return - return a concatentation of the string and course eg. (CS451)
-	 */
-
-	public static String getPrefixCourseNo(Prefix prefix, Course course) {
-		return prefix.getName().toString() + course.getCourseNo().toString();
-	}
-
-	public Boolean isAvailable(Semester sem, Integer year) {
+	public Location getLocation(Semester sem, Integer year) {
+		if (sem == null)
+			return Location.BOTH;
 		Term inputTerm = Term.create(sem, year);
+		Location generalLocation = null;
+		Location specificLocation = null;
 		for (ECourseAvailability record : this.entity.getAvailableCourse()) {
 			Term availableTerm = Term.create(
-					Semester.wrap(record.getSemester()), record.getYear());
+					Semester.wrap(record.getSemester()), year == null ? null
+							: record.getYear());
 
-			if (inputTerm.equals(availableTerm))
-				return true;
+			if (inputTerm.getSemester().equals(availableTerm.getSemester())) {
+				if (availableTerm.getYear() != null
+						&& availableTerm.getYear().equals(inputTerm.getYear())) {
+					specificLocation = Location.getLocationForString(record
+							.getLocation());
+				}
+				if (availableTerm.getYear() == null) {
+					generalLocation = Location.getLocationForString(record
+							.getLocation());
+				}
+			}
 		}
-		return false;
+		if (specificLocation != null)
+			return specificLocation;
+		else
+			return generalLocation;
 	}
 
-	// FIXME: left out location of the course
+	public Prefix getPrefix() {
+		return Prefix.wrap(this.entity.getCoursePrefix());
+	}
+
+	@Override
+	public String toString() {
+		String result = this.getPrefix().getName()
+				+ this.entity.getCourseNumber().toString();
+		return result;
+	}
 
 	/**
+	 * checks general course availability.
+	 * 
+	 * @param term
+	 *            term - semester and year
+	 * @param year
+	 * @return
+	 */
+	public Boolean isAvailable(Term term) {
+		return isAvailable(term.getSemester(), term.getYear());
+	}
+
+	/**
+	 * This method performs 'soft' check: if course is not available in
+	 * specified term, then check general availability.
+	 * 
+	 * @param term
+	 * @param location
+	 * @return
+	 */
+	public Boolean isAvailable(Term term, Location location) {
+		if (location == null)
+			throw new IllegalArgumentException("Location is null.");
+
+		Location availableLocation = getLocation(term.getSemester(),
+				term.getYear());
+
+		if (availableLocation == null) {
+			availableLocation = getLocation(term.getSemester(), null);
+			if (availableLocation == null)
+				return false;
+		}
+		if ((location == Location.BOTH) || (availableLocation == Location.BOTH))
+			return true;
+		if ((availableLocation == Location.ONCAMPUS)
+				|| (availableLocation == Location.ONLINE)) {
+			if (availableLocation == location)
+				return true;
+			else
+				return false;
+		}
+		throw new IllegalStateException("This should never be reached.");
+	}
+
+	/**
+	 * checks general course availability.
+	 * 
+	 * @param sem
+	 * @param year
+	 * @return
+	 */
+	public Boolean isAvailable(Semester sem) {
+		return isAvailable(sem, null);
+	}
+
+	/**
+	 * availability. this method checks if a particular course is available for
+	 * a FIXED year and FIXED semester.. Example: Graphics is available in the
+	 * fall for all years! so if you check availability for graphics course in
+	 * fall 2009, it will return FALSE as this method only checks for FIXED
+	 * year. However u can check if its available for all falls by using year ==
+	 * null and it will return TRUE
+	 * 
+	 * @param sem
+	 * @param year
+	 * @return true if available and false if not available.
+	 */
+	public Boolean isAvailable(Semester sem, Integer year) {
+
+		List<ECourseAvailability> list = Ebean.find(ECourseAvailability.class)
+				.where().eq("semester", Semester.unwrap(sem)).eq("year", year)
+				.eq("course", entity).findList();
+		if (list.isEmpty()) {
+			return false;
+		}
+		return true;
+	}
+
+	//
+
+	/**
+	 * this method sets courseavailabilty for a FIXED semester na FIXED year...
+	 * also if the year is null implies that the course is available for all the
+	 * FIXED semesters Also, you can change the availabliy for a particular year
+	 * even if its availalbe for all years (year = null) Any doubts ask Me or
+	 * Alex
+	 * 
+	 * Example: Graphics is available in the fall for all years ONCAMPUS but for
+	 * year 2014 you want graphics to be available ONLINE, you can use
+	 * setCourseAvailability(Semester.FALl, 2014 ,true , Location.ONLINE) to
+	 * change graphics courseavailability.
 	 * 
 	 * @param sem
 	 * @param year
@@ -205,27 +296,29 @@ public class Course {
 			newEntry.setCourse(entity);
 			newEntry.setYear(year);
 			newEntry.setLocation(location.toString());
-			newEntry.setSemester(Semester.upwrap(sem));
+			newEntry.setSemester(Semester.unwrap(sem));
 			newEntry.save();
+			this.entity.refresh();
 		}
 
 		else if (isAvailable(sem, year) && !isAvailable) {
 			List<ECourseAvailability> list = Ebean
 					.find(ECourseAvailability.class).where()
-					.eq("semester", sem).eq("year", year).eq("course", entity)
-					.findList();
+					.eq("semester", Semester.unwrap(sem)).eq("course", entity)
+					.eq("year", year).findList();
 
 			if (!list.isEmpty()) {
 				list.get(0).delete(); // unique entry!
 			}
+			this.entity.refresh();
 		}
 
 		else {
 			ECourseAvailability entry = null;
 			List<ECourseAvailability> list = Ebean
 					.find(ECourseAvailability.class).where()
-					.eq("semester", sem).eq("year", year).eq("course", entity)
-					.findList();
+					.eq("semester", Semester.unwrap(sem)).eq("year", year)
+					.eq("course", entity).findList();
 
 			if (!list.isEmpty()) {
 				entry = list.get(0); // unique entry!
@@ -263,9 +356,37 @@ public class Course {
 							Location.ONCAMPUS.toString())) {
 				entry.setLocation(Location.BOTH.toString());
 			}
-
+			entry.update();
+			this.entity.refresh();
 		}
+		return;
+	}
 
+	public PreRequisite getPreRequisite() {
+		return entity.getPrereq() == null ? null : PreRequisite.wrap(entity
+				.getPrereq());
+	}
+
+	public CoRequisite getCoRequisite() {
+		return entity.getCoreq() == null ? null : CoRequisite.wrap(entity
+				.getCoreq());
+	}
+
+	@Override
+	public int hashCode() {
+		return entity.getId();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Course) {
+			Course anotherCourse = (Course) o;
+			if (this.getId().equals(anotherCourse.getId()))
+				return true;
+			else
+				return false;
+		}
+		return false;
 	}
 
 }

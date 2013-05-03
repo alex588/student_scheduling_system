@@ -1,8 +1,36 @@
 @import model.CourseGroup 
 
-@admin("Course List") {
+@admin("Course Group List") {
+<script>
+function disp_confirm(id)
+{
+	var r=confirm("Do you want to continue and delete this?" )
+	if (r==true)
+ 	 {
+		  $.ajax({
+                url: '/course-groups/'+id,
+                type: 'DELETE',
+                success: function(result) {
+                	location.reload(true);
+                }
+            });
+ 	 }
+	else
+	  {
+	  }
+}
+function disp_confirm_edit(id)
+{
+  var myForm = document.createElement("form");
+  myForm.method="GET" ;
+  myForm.action = "/course-groups/edit-course-group-page/" + id;
+  document.body.appendChild(myForm) ;
+  myForm.submit() ;
+  document.body.removeChild(myForm) ;
+}
+</script>
 <div id="breadcrumbs">
-<a href="/">Home</a> &gt; <a href="">Course
+<a href="">Course
 Groups</a><br>
 </div>
 <div id="content">
@@ -15,14 +43,14 @@ Groups</a><br>
     <tr>
     	<td>Edit</td>
     	<td>Delete</td>
-      	<td>Id</td>
+      	<td>Abbreviation</td>
       	<td>Title</td>
     </tr>
-@for(c <- CourseGroup.getAll()){
+@for(c <- CourseGroup.getAllVisible()){
     <tr>
-    	<td><a href="/course-groups/edit/c.getId()">Edit</a></td>
-    	<td>Form</td>
-        <td>@c.getId()</td>
+    	<td><input type="button" onclick="disp_confirm_edit(@c.getId())" value="Edit"></td>
+    	<td><input type="button" onclick="disp_confirm(@c.getId())" value="Delete"></td>
+        <td>@c.getAbbreviation()</td>
         <td>@c.getTitle()</td>
     </tr>
 }
@@ -30,5 +58,8 @@ Groups</a><br>
 </table>
 </div>
 </div>
+
+
+
 
 }

@@ -1,82 +1,105 @@
 @(requirementForm: Form[views.forms.RequirementForm])
 @import model.CourseGroup
+@import model.Requirement
 
 @admin("Requirement Add") {
-    <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-  <meta content="text/html; charset=ISO-8859-1"
- http-equiv="content-type">
-  <title></title>
-</head>
-<body>
 <div id="breadcrumbs">
-<a href="/">Home</a> &gt; <a
- href="/requirements/">Requirements</a>
-&gt; <a href="">Requirement Add</a><br>
+<a href="/requirements/">Requirements</a>&gt; <a href="">Requirement Add</a><br>
 </div>
+
+<script language="JavaScript">
+function test(){
+if(document.getElementById('simple').checked) {
+	document.getElementById('requirement').value = "";
+	document.getElementById('requirement').disabled = true;
+	document.getElementById('courseNum').disabled = false;
+	document.getElementById('courseGroup').disabled = false;
+
+}else if(document.getElementById('complex').checked) {
+	document.getElementById('courseNum').disabled = true;
+	document.getElementById('courseGroup').disabled = true;
+	document.getElementById('courseNum').value = "";
+	document.getElementById('requirement').disabled = false;
+  
+}
+}
+
+function validate(){
+	var name=document.getElementById('name').value;
+	var simple = document.getElementById('simple').checked;	
+	var complex = document.getElementById('complex').checked;
+	var cg = document.getElementById('courseGroup').value;
+	var cn = document.getElementById('courseNum').value;
+	var r = document.getElementById('requirement').value;
+	
+	if (name==null || name==""){
+	  alert("Name cannot be blank");
+	  return false;
+	  }
+	
+	if(simple && cn=="" && cg ==""){
+	 alert("Course Number or Course Group cannot be blank");
+	return false;	
+	}
+
+	if(complex && r==""){
+	 alert("Combination cannot be blank");
+	 return false;
+	}
+
+
+}
+</script>
+
 <div id="content">
-<form name="requirementForm" action="/requirements/add/"
- method="post">
-  <table style="width: 644px; height: 476px;" border="0">
+<form name="requirementForm" action="/requirements/add/" method="post" onSubmit="return validate();">
+ <table>
+ <tr><td valign="top">
+  <table border="0" width="700">
     <tbody>
       <tr>
         <td>Name:</td>
         <td colspan="3"><input name="name" colspan="2"></td>
+        </tr><td></td>
+        <td colspan="5">Name of the new requirement</td>
       </tr>
       <tr>
-        <td><input checked="checked"
- name="requirementType" value="simple" type="radio">Simple</td>
-        <td colspan="2">
-        <select name="courseGroup">
+        <td><input onclick="test();" checked="checked" name="requirementType" id="simple" value="simple" type="radio">Simple</td>
+        <td><input type="number" name="fromCourseGroup" id="courseNum"> From</td>
+        <td><select name="courseGroup" id="courseGroup">
         @for(c <- CourseGroup.getAll()){
-			<option value="c.getId()">c.getName()</option>
+			<option value="@c.getId()">@c.getTitle()</option>
 		}
         </select>
-        <br>
         </td>
+        </tr><td></td>
+        <td colspan="5">Number of courses from coursegroup in requirement ie.: 4 courses from Humanities 100 Level</td>
       </tr>
-      <tr>
-        <td><input name="requirementType"
- value="prerequisite" type="radio">Degree Specific
-Prerequisite</td>
-        <td colspan="2"><input name="degreePrereq"
- size="30" colspan="2"></td>
-      </tr>
-      <tr>
-        <td><input name="requirementType"
- value="corequisite" type="radio">Degree Specific
-Corequisite<br>
-        </td>
-        <td colspan="2"><input name="degreCoreq"
- size="30" colspan="2"></td>
-      </tr>
-      <tr>
-        <td><input name="requirementType"
- value="semester" type="radio">Predefined Semester</td>
-        <td><input size="3" name="semesterCourse"></td>
-        <td>
-        <select name="semester">
-        <option>FALL</option>
-        <option>WINTER</option>
-        <option>SPRING</option>
-        <option>SUMMER I</option>
-        <option>SUMMER II</option>
-        </select>
-        </td>
-      </tr>
-      <tr>
-        <td><input name="requirementType"
- value="combination" type="radio">Combination</td>
-        <td><input name="comboBool" size="30" colspan="2"></td>
+        <td><input onclick="test();" name="requirementType" value="combination" id="complex" type="radio">Combination</td>
+        <td><input name="comboBool" size="30" colspan="2" id="requirement"></td>
         <td></td>
       </tr>
       <tr>
-        <td colspan="6" align="center"><input
- type="submit"></td>
+        <td colspan="6" align="center"><input type="submit"></td>
       </tr>
     </tbody>
   </table>
+  </td><td>
+  <div style="overflow:auto;height:700px;">
+  <font color="#C8C8C8" size="2">
+  <h3>Requirement Reference</h3>
+  <table>
+  <tr><td>Abbreviation</td><td>Title</td></tr>
+  @for(c <- Requirement.getAllVisible()){
+		<tr>
+			<td>@c.toString()</td>
+			<td>@c.getTitle()</td>
+		</tr>
+	}
+	</table>
+	</font>
+	</div>
+</td></tr></table>		
   <div style="text-align: center;"></div>
 </form>
 </div>

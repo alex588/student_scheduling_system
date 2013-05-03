@@ -1,15 +1,18 @@
 package model;
 
+/**
+ * @author Tregubov Alexey
+ */
 public enum Junction {
-	OR{
+	OR {
 		@Override
-		public String toString(){
+		public String toString() {
 			return "OR";
 		}
 	},
-	AND{
+	AND {
 		@Override
-		public String toString(){
+		public String toString() {
 			return "AND";
 		}
 	}

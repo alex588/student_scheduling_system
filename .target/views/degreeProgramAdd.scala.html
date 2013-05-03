@@ -1,45 +1,46 @@
-@(degreeProgramForm: Form[views.forms.DegreeProgramForm], requirementsInDegreeHidden: String, requirementsInDegreeTextBox: String)
+@(degreeProgramForm: Form[views.forms.DegreeProgramForm])
 @import model.Requirement
 
 @admin("Degree Program Add") {
-    <div id="breadcrumbs"><a href="/">Home</a>
-&gt; <a href="/degreePrograms/">Degree Programs</a>
+    <div id="breadcrumbs"><a href="/degree-programs/">Degree Programs</a>
 &gt; <a href="">Degree Program Add</a><br>
 <br>
 <br>
 </div>
-<div id="content">
-<form name="degreeProgram"
- action="/degreePrograms/generateForm" method="post"><br>
 
-  <table style="width: 644px; height: 476px;" border="0">
-    <tbody>
-      <tr>
-        <td>Requirement to Add:</td>
-        <td><select name="requirementIdAdd">
-        @for(c <- Requirement.getAll()){
-			<option value="c.getId()">c.getName()</option>
-		}
-        </select>@Html(requirementsInDegreeHidden)</td>
-      </tr>
-      <tr>
-        <td>Add to Degree!</td>
-        <td><input value="Add To Degree" type="submit">
-        </td>
-      </tr>
-      </form>
-      <form name="degreeProgramForm" action="/degreePrograms/add/"
- method="post">
+<script language="JavaScript">
+function validate(){
+	var name = document.getElementById('name').value;
+	
+	if (name==null || name==""){
+	  alert("Name cannot be blank");
+	  return false;
+	  }
+
+}
+</script>
+
+<div id="content">
+
+  <table border="0">
+    <tbody>      
+      <form name="degreeProgramForm" action="/degree-programs/add/" method="post" onSubmit="return validate();">
        <tr>
         <td>Name:</td>
-        <td colspan="1"><input size="30" name="name"></td>
+        <td colspan="1"><input size="30" name="name" id="name"></td>
+        </tr><td></td>
+        <td colspan="5">Name of the new Degree Program</td>
       </tr>
       <tr>
-      	<td></td><td>@Html(requirementsInDegreeTextBox)</td>
+      	<td colspan="2">Choose Requirements in Degree Program:<br><br></td>
       </tr>
+      @for(r <- Requirement.getAll()){
+      <tr>
+      	<td></td><td><input name="requirementList[@r.getId()]" value="@r.getId()" type="checkbox">@r.getTitle()</td>
+      </tr>
+      }
 	 <tr>
-        <td colspan="3" align="center"><input
- type="submit"></td>
+        <td colspan="3" align="center"><input type="submit"></td>
       </tr>
     </tbody>
   </table>

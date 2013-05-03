@@ -1,80 +1,159 @@
 package controllers.constructors;
 
-import java.util.ArrayList;
+import java.text.ParseException;
 import java.util.List;
-
+import controllers.auth.AdminCheckSecurity;
+import controllers.util.Converter;
 import model.*;
 import play.data.Form;
 import play.mvc.Controller;
 import play.mvc.Result;
-import views.forms.CourseGroupAddCourseForm;
+import play.mvc.Security;
+import views.forms.CourseGroupEditForm;
 import views.forms.CourseGroupForm;
 
+/**
+ * 
+ * @author Ihsan Tolga
+ * 
+ */
+@Security.Authenticated(AdminCheckSecurity.class)
 public class CourseGroupsController extends Controller {
 
-	public static Result getCourseGroups(){		
+	public static Result getCourseGroups() {
 		return ok(views.html.courseGroupList.render());
 	}
-	
-	public static Result getEditCourseGroupPage(Integer couseGroupId){
-		
-		return ok();
+
+	public static Result getEditCourseGroupPage(Integer courseGroupId) {
+		CourseGroup cg = CourseGroup.getById(courseGroupId);
+		if (cg == null)
+			return badRequest(views.html.errorPage
+					.render("DB error: course group with id= " + courseGroupId
+							+ " wasn't found."));
+		return ok(views.html.courseGroupEdit.render(
+				form(CourseGroupEditForm.class), cg));
 	}
 
-	public static Result editCourseGroup(Integer courseGroupId){
-		
-		return ok();
+	public static Result editCourseGroup(Integer courseGroupId) {
+		Form<CourseGroupEditForm> form = form(CourseGroupEditForm.class)
+				.bindFromRequest();
+		if (form.hasErrors()) {
+			return badRequest(views.html.errorPage
+					.render("Not all mandatory fields entered."));
+		} else {
+			CourseGroupEditForm courseGroupEditForm = form.get();
+			if (courseGroupEditForm.groupType.equalsIgnoreCase("courseList")) {
+				SimpleCourseGroup courseGroup = (SimpleCourseGroup) SimpleCourseGroup
+						.getById(courseGroupId);
+				if (courseGroup == null)
+					return badRequest(views.html.errorPage
+							.render("DB error: course group with id= "
+									+ courseGroupId + " wasn't found."));
+				String abbr;
+				if (courseGroup.getTitle().equalsIgnoreCase(
+						courseGroupEditForm.name))
+					abbr = courseGroup.getAbbreviation();
+				else
+					abbr = Converter
+							.cgAbbreviationGen(courseGroupEditForm.name);
+
+				courseGroup.update(courseGroupEditForm.name, true, null, abbr,
+						true);
+
+				List<Course> coursesWithin = courseGroup.getAllCourses();
+				for (Course course : coursesWithin) {
+					courseGroup.removeCourse(course);
+				}
+
+				String courseOfGroup = courseGroupEditForm.courseNumbers
+						.toString();
+				List<Course> coursesToAdd = Converter
+						.parseCourseList(courseOfGroup);
+				for (Course course : coursesToAdd) {
+					courseGroup.addCourse(course);
+				}
+			} else if (courseGroupEditForm.groupType
+					.equalsIgnoreCase("groupList")) {
+				ComplexCourseGroup courseGroup = (ComplexCourseGroup) ComplexCourseGroup
+						.getById(courseGroupId);
+				String abrevTemp = new String(CourseGroup
+						.getById(courseGroupId).getAbbreviation());
+				try {
+					ComplexCourseGroup updated = Converter.convertGroupCombo(
+							courseGroupEditForm.groupComboBool,
+							courseGroupEditForm.name, abrevTemp, false);
+					courseGroup.update(updated, true);
+				} catch (ParseException e) {
+					return badRequest(views.html.errorPage
+							.render("Parse error: " + e.toString()));
+				} catch (IllegalArgumentException e) {
+					return badRequest(views.html.errorPage
+							.render("Parse error: " + e.toString()));
+				}
+			} else {
+				return badRequest(views.html.errorPage
+						.render("Wrong radio button selected."));
+			}
+		}
+		return ok(views.html.courseGroupList.render());
 	}
-	
-	public static Result getAddCourseGroupPage(){
-		
+
+	public static Result getAddCourseGroupPage() {
 		return ok(views.html.courseGroupAdd.render(form(CourseGroupForm.class)));
 	}
-	
-	public static Result deleteCourseGroup(Integer courseGroupId){
-		return ok();
+
+	public static Result deleteCourseGroup(Integer courseGroupId) {
+
+		CourseGroup courseGroup = CourseGroup.getById(courseGroupId);
+		if (courseGroup == null)
+			return badRequest(views.html.errorPage
+					.render("DB error: course group with id= " + courseGroupId
+							+ " wasn't found."));
+		CourseGroup.delete(courseGroup);
+		return ok(views.html.courseGroupList.render());
 	}
-	
-	public static Result addCourseGroup(){
-		Form<CourseGroupForm> form = form(CourseGroupForm.class).bindFromRequest();
+
+	public static Result addCourseGroup() {
+		Form<CourseGroupForm> form = form(CourseGroupForm.class)
+				.bindFromRequest();
 		if (form.hasErrors()) {
-			return badRequest();
-		}else{
+			return badRequest(views.html.errorPage
+					.render("Not all mandatory fields entered."));
+		} else {
 			CourseGroupForm courseGroupForm = form.get();
-			
+			String abbr = Converter.cgAbbreviationGen(courseGroupForm.name);
+			if (courseGroupForm.groupType.equalsIgnoreCase("courseList")) {
+				SimpleCourseGroup courseGroup = SimpleCourseGroup.create(
+						courseGroupForm.name, abbr);
+
+				String courseOfGroup = courseGroupForm.courseNumbers.toString();
+				try {
+					List<Course> coursesToAdd = Converter
+							.parseCourseList(courseOfGroup);
+
+					for (Course course : coursesToAdd) {
+						courseGroup.addCourse(course);
+					}
+				} catch (IllegalArgumentException e) {
+					return badRequest(views.html.errorPage
+							.render("Parse error: " + e.toString()));
+				}
+			} else if (courseGroupForm.groupType.equalsIgnoreCase("groupList")) {
+				try {
+					Converter.convertGroupCombo(courseGroupForm.groupComboBool,
+							courseGroupForm.name, abbr, true);
+				} catch (ParseException e) {
+					return badRequest(views.html.errorPage
+							.render("Parse error: " + e.toString()));
+				} catch (IllegalArgumentException e) {
+					return badRequest(views.html.errorPage
+							.render("Parse error: " + e.toString()));
+				}
+			} else {
+				return badRequest(views.html.errorPage
+						.render("Wrong radio button selection"));
+			}
 			return ok(views.html.courseGroupList.render());
 		}
 	}
-
-	//This generates fields that are sent back to the CourseGroupsAdd page so that the user can keep entering in classes	
-	/*public static Result generateForm(){
-		Form<CourseGroupAddCourseForm> form = form(CourseGroupAddCourseForm.class).bindFromRequest();
-		if (form.hasErrors()) {
-			return badRequest();
-		}else{
-			//Create variables to hold html data for storing courses added to the course group
-			CourseGroupAddCourseForm data = form.get();
-			String courseNumberHiddenFields = "";
-			String courseNumberTextBoxes = "";
-			//Check for bad data
-			if(data.courses != null){
-				//For each course in the posted form data, create a hidden field containing the course number so that when they add another course,
-				//the courses already added stay alive instead of being wiped each post.
-				//Also create a text box with the course number that will be part of the final course group creation form.
-				for(int i = 0; i < data.courses.size(); i++){
-					courseNumberHiddenFields = courseNumberHiddenFields + "<input type=\"hidden\" name=\"courses[" + Integer.toString(i) + "]\" value=\"" + data.courses.get(i) + "\"/>";
-					courseNumberTextBoxes = courseNumberTextBoxes + "<input type=\"text\" name=\"courseNumbers[" + Integer.toString(i) + "]\" value=\"" + data.courses.get(i) + "\"/>";
-				}
-				courseNumberHiddenFields = courseNumberHiddenFields + "<input type=\"hidden\" name=\"courses[" + data.courses.size() + "]\" value=\"" + data.courseAdd + "\"/>";
-				courseNumberTextBoxes = courseNumberTextBoxes + "<input type=\"text\" name=\"courseNumbers[" + data.courses.size() + "]\" value=\"" + data.courseAdd + "\"/>";				
-				
-			}//For the first course added
-			else{
-				courseNumberHiddenFields = courseNumberHiddenFields + "<input type=\"hidden\" name=\"courses[0]\" value=\"" + data.courseAdd + "\"/>";
-				courseNumberTextBoxes = courseNumberTextBoxes + "<input type=\"text\" name=\"courseNumbers[0]\" value=\"" + data.courseAdd + "\"/>";
-			}
-			
-			return ok(views.html.courseGroupAdd.render(form(CourseGroupForm.class)));
-		}
-	}*/
 }

@@ -1,101 +1,137 @@
 @(courseForm: Form[views.forms.CourseForm])
 @import model.Prefix
+@import model.Semester
+@import model.Course
 @admin("Course Add") {
     <div id="breadcrumbs">
-<a href="/">Home</a> &gt; <a href="/courses/">Courses</a>
+<a href="/courses/">Courses</a>
 &gt; <a href="">Course Add</a><br>
 </div>
+
+<script language="JavaScript">
+function validate(){
+	var title = document.getElementById('title').value;
+	var prefix = document.getElementById('prefix').value;	
+	var cn = document.getElementById('courseNumber').value;
+	var c = document.getElementById('credits').value;
+	
+	if (title==null || title==""){
+	  alert("Title cannot be blank");
+	  return false;
+	  }
+	
+	if(cn==""){
+	 alert("Course Number cannot be blank");
+	return false;	
+	}
+
+	if(c==""){
+	 alert("Credits cannot be blank");
+	 return false;
+	}
+
+
+}
+</script>
 <div id="content">
-<form name="courseForm" action="/courses/"
- method="post">
-  <table style="width: 644px; height: 476px;" border="0">
+<form name="courseForm" action="/courses/" onSubmit="return validate();" method="post">
+ <table>
+ <tr><td valign="top">
+  <table border="0" width="700">
     <tbody>
       <tr>
         <td>Title:</td>
-        <td colspan="3"><input name="title"
- type="text"></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td colspan="5"><input name="title" id="title" type="text" size="50"></td>
+    	</tr>
+    	<tr>
+        <td></td><td colspan="5">Full name of the new course ie: Introduction to Algorithms</td>
       </tr>
       <tr>
         <td>Course Prefix:</td>
-        <td colspan="2"><select name="coursePrefix">
+        <td colspan="5"><select name="coursePrefix" id="prefix">
         @for(c <- Prefix.getAll()){
 			<option value="@c.getId()">@c.getName()</option>
 		}
         </select></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        </tr>
+        <tr><td></td>
+        <td colspan="5">The prefix of the new course ie.: CS in CS115</td>
       </tr>
       <tr>
         <td>Course Number:</td>
-        <td colspan="2"><input name="courseNumber"
- size="2" type="text"></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td colspan="5"><input name="courseNumber" id="courseNumber" size="2" type="number" maxlength="3" min="0" max="700" ></td>
+ 		</tr>
+ 		<tr><td></td>
+        <td colspan="5">The number of the new course ie.: 115 in CS115</td>
       </tr>
       <tr>
         <td>Credits:</td>
-        <td colspan="2"><input name="credits"
- size="2" type="text"></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td colspan="5"><input name="credits" id="credits" size="2" type="number" maxlength="1" min="0" max="6"></td>
+ 		</tr><td></td>
+        <td colspan="5">The number of the credits for the course.</td>
       </tr>
       <tr>
-        <td>Offered:</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td colspan="5">When and where the course is offered every year.</td>
+      </tr>
+      <tr>
+      	<td></td>
+      	<td>FALL</td>
+      	<td>WINTER</td>
+      	<td>SPRING</td>
+      	<td>SUMMER I</td>
+      	<td>SUMMER II</td>
       </tr>
       <tr>
         <td>OnCampus:</td>
-        <td><input name="offeredOnCampus[0]"
- value="Fall" type="checkbox">Fall</td>
-        <td><input name="offeredOnCampus[1]"
- value="Winter" type="checkbox">Winter</td>
-        <td><input name="offeredOnCampus[2]"
- value="Spring" type="checkbox">Spring</td>
-        <td><input name="offeredOnCampus[3]"
- value="Summer1" type="checkbox">Summer I</td>
-        <td><input name="offeredOnCampus[4]"
- value="Summer2" type="checkbox">Summer II</td>
+        <td><input name="offeredOnCampus[0]" value="@Semester.FALL.toString()" type="checkbox"></td>
+        <td><input name="offeredOnCampus[1]" value="@Semester.WINTER.toString()" type="checkbox"></td>
+        <td><input name="offeredOnCampus[2]" value="@Semester.SPRING.toString()" type="checkbox"></td>
+        <td><input name="offeredOnCampus[3]" value="@Semester.SUMMER1.toString()" type="checkbox"></td>
+        <td><input name="offeredOnCampus[4]" value="@Semester.SUMMER2.toString()" type="checkbox"></td>
       </tr>
       <tr>
         <td>Online:</td>
-        <td><input name="offeredOnline[0]" value="Fall"
- type="checkbox">Fall</td>
-        <td><input name="offeredOnline[1]"
- value="Winter" type="checkbox">Winter</td>
-        <td><input name="offeredOnline[2]"
- value="Spring" type="checkbox">Spring</td>
-        <td><input name="offeredOnline[3]"
- value="Summer1" type="checkbox">Summer I</td>
-        <td><input name="offeredOnline[4]"
- value="Summer2" type="checkbox">Summer II</td>
+        <td><input name="offeredOnline[0]" value="@Semester.FALL.toString()" type="checkbox"></td>
+        <td><input name="offeredOnline[1]" value="@Semester.WINTER.toString()" type="checkbox"></td>
+        <td><input name="offeredOnline[2]" value="@Semester.SPRING.toString()" type="checkbox"></td>
+        <td><input name="offeredOnline[3]" value="@Semester.SUMMER1.toString()" type="checkbox"></td>
+        <td><input name="offeredOnline[4]" value="@Semester.SUMMER2.toString()" type="checkbox"></td>
       </tr>
       <tr>
         <td style="text-align: left;">Prereqs:</td>
-        <td style="text-align: left;" colspan="2"><input type="text" name="prereqEquation" colspan="2"></td>
+        <td style="text-align: left;" colspan="5"><input type="text" name="prereqEquation" colspan="5"" size="50"></td>
+        </tr><td></td>
+        <td colspan="5">The boolean equation for the Prerequisites for the course ie.:<br>
+        CS115 AND(CS155 OR CS165) List of courses to the right for reference.</td>
        </tr>
       <tr>
         <td style="text-align: left;">Coreqs:</td>
-        <td style="text-align: left;" colspan="2"><input type="text" name="coreqEquation" colspan="2"></td>
+        <td style="text-align: left;" colspan="5"><input type="text" name="coreqEquation" colspan="5" size="50"></td>
+        </tr><td></td>
+        <td colspan="5">The boolean equation for the Corequisites the same as Prerequisite.</td>
         </tr>
-        <td colspan="6" align="center"><input
- type="submit"></td>
+        <td colspan="5" align="center"><input type="submit"></td>
         <td></td>
       </tr>
     </tbody>
+  </table>
+  </td><td>
+  <div style="overflow:auto;height:700px;">
+  <font color="#C8C8C8" size="2">
+  <h3>Courses Reference</h3>
+  <table>
+  	<tr><td>CourseNumber</td><td>Title</td></tr>
+	  @for(c <- Course.getAll()){
+		<tr>					
+			<td>@c.toString()</td>
+			<td>@c.getTitle()</td>		
+		</tr>
+		}
+  </table>
+  </font>
+  </div>
+  </td>
+  </tr>
   </table>
   <div style="text-align: center;"></div>
 </form>

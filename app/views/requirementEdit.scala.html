@@ -1,0 +1,111 @@
+@(requirementEditForm: Form[views.forms.RequirementEditForm], requirement : model.Requirement)
+@import model.CourseGroup
+@import model.Requirement
+@import model.SimpleRequirement
+@import controllers.util.Converter;
+
+@admin("Requirement Edit") {
+<div id="breadcrumbs">
+<a href="/requirements/">Requirements</a>
+&gt; <a href="">Requirement Edit</a><br>
+</div>
+
+<script language="JavaScript">
+function validate(){
+	var name=document.getElementById('name').value;
+	var simple = document.getElementById('simple').checked;	
+	var complex = document.getElementById('complex').checked;
+	var cg = document.getElementById('courseGroup').value;
+	var cn = document.getElementById('courseNum').value;
+	var r = document.getElementById('requirement').value;
+	
+	if (name==null || name==""){
+	  alert("Name cannot be blank");
+	  return false;
+	  }
+	
+	if(simple && cn=="" && cg ==""){
+	 alert("Course Number or Course Group cannot be blank");
+	return false;	
+	}
+
+	if(complex && r==""){
+	 alert("Combination cannot be blank");
+	 return false;
+	}
+
+
+}
+</script>
+
+<div id="content">
+<form name="requirementEditForm" action="/requirements/@requirement.getId()"
+ method="post">
+ <table>
+ <tr><td valign="top">
+  <table border="0" width="700">
+    <tbody>
+      <tr>
+        <td>Name:</td>
+        <td colspan="3"><input name="name" id="name" colspan="2" value="@requirement.getTitle()"></td>
+        </tr><td></td>
+        <td colspan="5">Name of the new requirement</td>
+      </tr>
+      @if(requirement.isSimple()){<tr>
+        <td><input checked name="requirementType" value="simple" id="simple" type="radio">Simple</td>
+        <td><input type="number" name="fromCourseGroup" id="courseNum" value="@if(requirement.isSimple()){@{var simpleR:SimpleRequirement = requirement.asInstanceOf[SimpleRequirement];simpleR.getNumberOfCourses().toString()}}"> From</td>
+        <td><select name="courseGroup" id="courseGroup">
+        	@if(requirement.isSimple()){
+	        	@{var simpleR:SimpleRequirement = requirement.asInstanceOf[SimpleRequirement]; 
+	        	var cont:Html = Html("<option value=\"");
+	        	cont += Html(simpleR.getCourseGroup().getId().toString());
+	        	cont += Html("\">");
+	        	cont += Html(simpleR.getCourseGroup().getTitle());
+	        	cont += Html("</option>");
+	        	cont;
+        	}}
+        @for(c <- CourseGroup.getAll()){
+			<option value="@c.getId()">@c.getTitle()</option>
+		}
+        </select>
+        <br>
+        </td>
+        </tr><td></td>
+        <td colspan="5">Number of courses from coursegroup in requirement ie.: 4 courses from Humanities 100 Level</td>
+      </tr>}
+      @if(!requirement.isSimple()){<tr>
+        <td><input name="requirementType" value="combination" id="complex" type="radio" checked>Combination</td>
+        <td><input name="comboBool" id="requirement" size="30" colspan="2" value="@if(!requirement.isSimple()){@{var cont:Html = Html(Converter.convertRequirementCombo(requirement)); cont;}}" ></td>
+        <td></td>
+      </tr>}
+      <tr>
+        <td colspan="6" align="center"><input type="submit"></td>
+      </tr>
+    </tbody>
+  </table>
+  </td><td>
+  <div style="overflow:auto;height:700px;">
+  <font color="#C8C8C8" size="2">
+  <h3>Requirement Reference</h3>
+  <table>
+  <tr><td>Abbreviation</td><td>Title</td></tr>
+  @for(c <- Requirement.getAllVisible()){
+		<tr>
+			<td>@c.toString()</td>
+			<td>@c.getTitle()</td>
+		</tr>
+	}
+	</table>
+	</font>
+	</div>
+</td></tr></table>	
+  <div style="text-align: center;"></div>
+</form>
+</div>
+</body>
+</html>
+
+    
+    
+    
+}

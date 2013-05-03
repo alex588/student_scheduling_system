@@ -25,20 +25,27 @@ CREATE TABLE IF NOT EXISTS courses (
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS course_availability (
-  ca_semester_id_pk_fk int(11) NOT NULL,
-  ca_course_id_pk_fk int(11) NOT NULL,
-  ca_year int(11) NOT NULL,
+  ca_id int(11) NOT NULL AUTO_INCREMENT,
+  ca_semester_id_fk int(11) NOT NULL,
+  ca_course_id_fk int(11) NOT NULL,
+  ca_year int(11) DEFAULT NULL,
   ca_location varchar(20) NOT NULL,
-  PRIMARY KEY (ca_semester_id_pk_fk,ca_course_id_pk_fk),
-  KEY ca_course_id_pk_fk (ca_course_id_pk_fk)
+  PRIMARY KEY (ca_id),
+  KEY ca_semester_id_fk (ca_semester_id_fk),
+  KEY ca_course_id_fk (ca_course_id_fk)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
 
 CREATE TABLE IF NOT EXISTS course_groups (
   cg_id_pk int(10) NOT NULL AUTO_INCREMENT,
   cg_title varchar(50) NOT NULL,
+  cg_abbr varchar(50) DEFAULT NULL,
   cg_is_simple tinyint(1) NOT NULL,
+  cg_is_visible tinyint(1) NOT NULL DEFAULT '1',
   cg_junction_type varchar(20) DEFAULT NULL,
-  PRIMARY KEY (cg_id_pk)
+  PRIMARY KEY (cg_id_pk),
+  UNIQUE KEY cg_abbr (cg_abbr)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS course_groups_formulas (
@@ -89,17 +96,20 @@ CREATE TABLE IF NOT EXISTS prereq_coreq_formulas (
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS requirements (
-   req_id_pk int(10) NOT NULL AUTO_INCREMENT,
+  req_id_pk int(10) NOT NULL AUTO_INCREMENT,
   req_is_simple tinyint(1) NOT NULL,
   req_title varchar(50) NOT NULL,
+  req_abbr varchar(50) DEFAULT NULL,
   req_number_of_courses int(10) DEFAULT NULL,
   req_is_visible tinyint(1) NOT NULL,
   req_junction_type varchar(20) DEFAULT NULL,
   req_cg_id_fk int(11) DEFAULT NULL,
   PRIMARY KEY (req_id_pk),
+  UNIQUE KEY req_abbr (req_abbr),
   KEY formula_id (req_junction_type),
   KEY req_cg_id_fk (req_cg_id_fk)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+
 
 CREATE TABLE IF NOT EXISTS req_formulas (
   rf_parent_id_pk_fk int(11) NOT NULL,
@@ -122,8 +132,8 @@ ALTER TABLE `courses`
   ADD CONSTRAINT courses_ibfk_3 FOREIGN KEY (course_prereq_formula_id_fk) REFERENCES prereq_coreq_formulas (pcf_id_pk) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `course_availability`
-  ADD CONSTRAINT course_availability_ibfk_1 FOREIGN KEY (ca_semester_id_pk_fk) REFERENCES semesters (semster_id_pk) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT course_availability_ibfk_2 FOREIGN KEY (ca_course_id_pk_fk) REFERENCES courses (course_id_pk) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT course_availability_ibfk_1 FOREIGN KEY (ca_semester_id_fk) REFERENCES semesters (semster_id_pk) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT course_availability_ibfk_2 FOREIGN KEY (ca_course_id_fk) REFERENCES courses (course_id_pk) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `course_groups_formulas`
   ADD CONSTRAINT course_groups_formulas_ibfk_1 FOREIGN KEY (cgf_parent_id_pk_fk) REFERENCES course_groups (cg_id_pk) ON DELETE CASCADE ON UPDATE CASCADE,

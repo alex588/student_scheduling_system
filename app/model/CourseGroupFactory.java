@@ -2,14 +2,19 @@ package model;
 
 import model.entities.ECourseGroup;
 
-class CourseGroupFactory {
+/**
+ * @author Alexey Tregubov
+ */
+/* package */class CourseGroupFactory {
 	static CourseGroup wrap(ECourseGroup entity) {
+		if (entity == null)
+			return null;
 		CourseGroup courseGroup = null;
-		if (entity.getCg_is_simple())
+		if (entity.isSimple())
 			courseGroup = new SimpleCourseGroup();
 		else
 			courseGroup = new ComplexCourseGroup();
-		courseGroup.entity = entity;		
+		courseGroup.entity = entity;
 		return courseGroup;
 	}
 }

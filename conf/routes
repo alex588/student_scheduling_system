@@ -7,20 +7,20 @@ GET		/								controllers.auth.LoginController.index()
 
 # Login operation
 POST 	/login/							controllers.auth.LoginController.login()
+POST	/logout/						controllers.auth.LoginController.logout()
 
 # Degree program selection for Student Side
-GET		/student-degree-programs/          controllers.constructors.DegreeProgramsController.getDegreeProgramsListForStudent()
+GET		/student-degree-programs/          controllers.auth.LoginController.getStudentHomePage()
 POST	/student-degree-programs/          controllers.constructors.DegreeProgramsController.setDegreeProgram()
 
-# Degree program selection for CourseDirector Side
-GET		/degree-programs/					controllers.constructors.DegreeProgramsController.getAllDegreePrograms()
+GET		/course-director-welcome-page/		controllers.auth.LoginController.getAdminHomePage()
 
 # Degree program requirements selection
-GET		/student-degree-program-requirements/         controllers.constructors.DegreeProgramsController.getDegreeRequirementsForStudent()
+POST	/student-degree-program-requirements/			controllers.constructors.StudyPlanConstructionController.constructStudyPlan()
 
 # Course
 GET		/courses/								controllers.constructors.CoursesController.getCourses()
-GET		/courses/editPage/:courseId				controllers.constructors.CoursesController.getEditCoursePage(courseId: java.lang.Integer)
+GET		/courses/edit-course-page/:courseId				controllers.constructors.CoursesController.getEditCoursePage(courseId: java.lang.Integer)
 GET		/courses/addCoursePage/					controllers.constructors.CoursesController.getAddCoursePage()
 POST	/courses/:courseId						controllers.constructors.CoursesController.editCourse(courseId: java.lang.Integer)
 POST	/courses/								controllers.constructors.CoursesController.addCourse()
@@ -31,18 +31,16 @@ GET		/course-groups/							controllers.constructors.CourseGroupsController.getCo
 GET		/course-groups/edit-course-group-page/:courseGroupId	controllers.constructors.CourseGroupsController.getEditCourseGroupPage(courseGroupId: java.lang.Integer)
 GET		/course-groups/addCourseGroupPage/		controllers.constructors.CourseGroupsController.getAddCourseGroupPage()
 POST	/course-groups/:courseGroupId			controllers.constructors.CourseGroupsController.editCourseGroup(courseGroupId: java.lang.Integer)
-POST	/course-groups/add/						controllers.constructors.CourseGroupsController.addCourseGroup()
+POST	/course-groups/						controllers.constructors.CourseGroupsController.addCourseGroup()
 DELETE	/course-groups/:courseGroupId			controllers.constructors.CourseGroupsController.deleteCourseGroup(courseGroupId: java.lang.Integer)
-#POST	/courseGroups/generateForm				controllers.constructors.CourseGroupsController.generateForm()
 
 # Degree Programs List
 GET		/degree-programs/						controllers.constructors.DegreeProgramsController.getDegreePrograms()
 GET		/degree-programs/edit-degree-program-page/:degreeId	controllers.constructors.DegreeProgramsController.getEditDegreeProgramPage(degreeId: java.lang.Integer)
 GET		/degree-programs/addDegreeProgramPage/	controllers.constructors.DegreeProgramsController.getAddDegreeProgramPage()
-POST	/degree-programs/						controllers.constructors.DegreeProgramsController.editDegreeProgram(degreeId: java.lang.Integer)
+POST	/degree-programs/:degreeId						controllers.constructors.DegreeProgramsController.editDegreeProgram(degreeId: java.lang.Integer)
 POST	/degree-programs/add/					controllers.constructors.DegreeProgramsController.addDegreeProgram()
 DELETE	/degree-programs/:degreeId				controllers.constructors.DegreeProgramsController.deleteDegreeProgram(degreeId: java.lang.Integer)
-POST	/degree-programs/generateForm			controllers.constructors.DegreeProgramsController.generateForm()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file            			   controllers.Assets.at(path="/public", file)
@@ -51,10 +49,10 @@ GET     /assets/*file            			   controllers.Assets.at(path="/public", fil
 GET		/requirements/							controllers.constructors.RequirementsController.getRequirements()
 GET		/requirements/edit-requirement-page/:requirementId	controllers.constructors.RequirementsController.getEditRequirementPage(requirementId: java.lang.Integer)
 GET		/requirements/addRequirementPage/		controllers.constructors.RequirementsController.getAddRequirementPage()
-POST	/requirements/							controllers.constructors.RequirementsController.editRequirement(requirementId: java.lang.Integer)
+POST	/requirements/:requirementId							controllers.constructors.RequirementsController.editRequirement(requirementId: java.lang.Integer)
 POST	/requirements/add/						controllers.constructors.RequirementsController.addRequirement()
 DELETE	/requirements/:requirementId			controllers.constructors.RequirementsController.deleteRequirement(requirementId: java.lang.Integer)
 
 
 #Documentation	/documentation
-GET		/documentation/							controllers.constructors.CoursesController.getDocumentation()
+GET		/documentation/							controllers.auth.LoginController.getDocumentationPage()

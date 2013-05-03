@@ -2,33 +2,31 @@ package model.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-
 import play.db.ebean.Model;
-import play.db.ebean.Model.Finder;
 
+/**
+ * 
+ * @author Mihir Daptardar
+ * 
+ */
 @Entity
 @Table(name = "req_formulas")
-public class ERequirementFormula extends Model{
-	
-	public Boolean rf_is_positive;
+public class ERequirementFormula extends Model {
+	private static final long serialVersionUID = 1L;
+	@Column(name = "rf_is_positive")
+	private Boolean isPositive;
+	@ManyToOne
+	@JoinColumn(name = "rf_child_id_pk_fk")
+	private ERequirement child;
+	@ManyToOne
+	@JoinColumn(name = "rf_parent_id_pk_fk")
+	private ERequirement parent;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="rf_child_id_pk_fk")
-	public ERequirement child;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="rf_parent_id_pk_fk")
-	public ERequirement parent;
-	
-	public Boolean getRf_is_positive() {
-		return rf_is_positive;
+	public Boolean isPositive() {
+		return isPositive;
 	}
 
 	public ERequirement getParent() {
@@ -39,8 +37,8 @@ public class ERequirementFormula extends Model{
 		return child;
 	}
 
-	public void setRf_is_positive(Boolean rf_is_positive) {
-		this.rf_is_positive = rf_is_positive;
+	public void setIsPositive(Boolean isPositive) {
+		this.isPositive = isPositive;
 	}
 
 	public void setParent(ERequirement parent) {
@@ -50,5 +48,5 @@ public class ERequirementFormula extends Model{
 	public void setChild(ERequirement child) {
 		this.child = child;
 	}
-	
+
 }

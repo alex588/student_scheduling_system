@@ -1,17 +1,21 @@
 package model;
 
+/**
+ * @author Alexey Tregubov
+ * 
+ */
 public class Term {
-	Semester semester;
-	Integer year;
+	private Semester semester;
+	private Integer year;
 
-	public Term() {
-
+	protected Term() {
+		super();
 	}
 
 	public static Term create(Semester semester, Integer year) {
 		return new Term(semester, year);
 	}
-	
+
 	Term(Semester semester, Integer year) {
 		super();
 		this.semester = semester;
@@ -22,16 +26,8 @@ public class Term {
 		return semester;
 	}
 
-	public void setSemester(Semester semester) {
-		this.semester = semester;
-	}
-
 	public Integer getYear() {
 		return year;
-	}
-
-	public void setYear(Integer year) {
-		this.year = year;
 	}
 
 	@Override
@@ -43,12 +39,26 @@ public class Term {
 	public boolean equals(Object o) {
 		if (o instanceof Term) {
 			Term anotherTerm = (Term) o;
-			if ((this.year == anotherTerm.year)
-					&& this.semester.equals(anotherTerm.semester))
+			if (((this.year != null) && (this.year.equals(anotherTerm.year)) || (this.year == anotherTerm.year))
+					&& ((this.semester != null && this.semester
+							.equals(anotherTerm.semester)) || (this.semester == anotherTerm.semester)))
 				return true;
 			else
 				return false;
 		}
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		return (this.semester == null ? "null" : this.semester.toString())
+				+ " " + this.year;
+	}
+
+	public String toShortString() {
+		if (semester == null || year == null)
+			return "   ";
+		return (semester == null ? " " : semester.toShortString()
+				+ (year == null ? "  " : year % 100));
 	}
 }

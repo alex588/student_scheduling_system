@@ -1,86 +1,113 @@
-@(courseEditForm: Form[views.forms.CourseEditForm], course: model.Course, prereq: String, coreq: String)
+@(courseEditForm: Form[views.forms.CourseEditForm], course: model.Course)
 
 @import java.util.Calendar;
 @import model.Semester;
 @import model.Prefix;
 @import model.Course;
+@import controllers.util.Converter;
 
-@admin("Course Add") {
+@admin("Course Edit") {
     <div id="breadcrumbs">
-<a href="/">Home</a> &gt; <a href="/courses/">Courses</a>
-&gt; <a href="">Course Add</a><br>
+<a href="/courses/">Courses</a>
+&gt; <a href="">Course Edit</a><br>
 </div>
+<script language="JavaScript">
+function validate(){
+	var title = document.getElementById('title').value;
+	var c = document.getElementById('credits').value;
+	
+	if (title==null || title==""){
+	  alert("Title cannot be blank");
+	  return false;
+	  }
+
+	if(c==""){
+	 alert("Credits cannot be blank");
+	 return false;
+	}
+
+
+}
+</script>
 <div id="content">
-<form name="courseForm" action="/courses/@course.getId()"
- method="post">
-  <table style="width: 644px; height: 476px;" border="0">
+<form name="courseForm" action="/courses/@course.getId()" onSubmit="return validate();" method="post">
+ <table>
+ <tr><td valign="top">
+  <table border="0" width="700">
     <tbody>
       <tr>
-      	<td>@{Course.getPrefixCourseNo(Prefix.getById(course.getPrefixId()), course)}</td>
-      </tr>
-      <tr>
         <td>Title:</td>
-        <td colspan="3"><input name="title" type="text" value="@course.getTitle()"></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td colspan="5"><input name="title" id="title" type="text" value="@course.getTitle()" size="50"></td>
+        </tr><td></td>
+        <td colspan="5">Full name of the new course ie: Introduction to Algorithms</td>
       </tr>
       <tr>
         <td>Credits:</td>
-        <td colspan="2"><input name="credits" size="2" type="text" value="@course.getCredits()"></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td colspan="5"><input name="credits" size="2" id="credits" type="number" value="@course.getCredits()" maxlength="1" min="0" max="6"></td>
+        </tr><td></td>
+        <td colspan="5">The number of the credits for the course.</td>
       </tr>
       <tr>
-        <td>Offered:</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td colspan="5">When and where the course is offered every year.</td>
+      </tr>
+      <tr>
+      	<td></td>
+      	<td>FALL</td>
+      	<td>WINTER</td>
+      	<td>SPRING</td>
+      	<td>SUMMER I</td>
+      	<td>SUMMER II</td>
       </tr>
       <tr>
         <td>OnCampus:</td>
-        <td><input name="offeredOnCampus[0]"
- value="Fall" type="checkbox" @if( course.isAvailable(Semester.FALL, Calendar.getInstance().get(Calendar.YEAR)) == true){checked}>Fall</td>
-        <td><input name="offeredOnCampus[1]"
- value="Winter" type="checkbox" @if( course.isAvailable(Semester.WINTER, Calendar.getInstance().get(Calendar.YEAR)) == true){checked}>Winter</td>
-        <td><input name="offeredOnCampus[2]"
- value="Spring" type="checkbox" @if( course.isAvailable(Semester.SPRING, Calendar.getInstance().get(Calendar.YEAR)) == true){checked}>Spring</td>
-        <td><input name="offeredOnCampus[3]"
- value="Summer1" type="checkbox" @if( course.isAvailable(Semester.SUMMER1, Calendar.getInstance().get(Calendar.YEAR)) == true){checked}>Summer I</td>
-        <td><input name="offeredOnCampus[4]"
- value="Summer2" type="checkbox" @if( course.isAvailable(Semester.SUMMER2, Calendar.getInstance().get(Calendar.YEAR)) == true){checked}>Summer II</td>
-      </tr>
+        <td><input name="offeredOnCampus[0]" value="Fall" type="checkbox" @if( course.isAvailable(Semester.FALL, null) == true && (course.getLocation(Semester.FALL, null) == Course.Location.ONCAMPUS || course.getLocation(Semester.FALL, null) == Course.Location.BOTH)){checked}></td>
+        <td><input name="offeredOnCampus[1]" value="Winter" type="checkbox" @if( course.isAvailable(Semester.WINTER, null) == true && (course.getLocation(Semester.WINTER, null) == Course.Location.ONCAMPUS || course.getLocation(Semester.WINTER, null) == Course.Location.BOTH)){checked}></td>
+        <td><input name="offeredOnCampus[2]" value="Spring" type="checkbox" @if( course.isAvailable(Semester.SPRING, null) == true && (course.getLocation(Semester.SPRING, null) == Course.Location.ONCAMPUS || course.getLocation(Semester.SPRING, null) == Course.Location.BOTH)){checked}></td>
+        <td><input name="offeredOnCampus[3]" value="Summer I" type="checkbox" @if( course.isAvailable(Semester.SUMMER1, null) == true && (course.getLocation(Semester.SUMMER1, null) == Course.Location.ONCAMPUS || course.getLocation(Semester.SUMMER1, null) == Course.Location.BOTH)){checked}></td>
+        <td><input name="offeredOnCampus[4]" value="Summer II" type="checkbox" @if( course.isAvailable(Semester.SUMMER2, null) == true && (course.getLocation(Semester.SUMMER2, null) == Course.Location.ONCAMPUS || course.getLocation(Semester.SUMMER2, null) == Course.Location.BOTH)){checked}></td>
+      </tr>      
       <tr>
         <td>Online:</td>
-        <td><input name="offeredOnline[0]" 
- value="Fall" type="checkbox" @if( course.isAvailable(Semester.FALL, Calendar.getInstance().get(Calendar.YEAR)) == true){checked}>Fall</td>
-        <td><input name="offeredOnline[1]"
- value="Winter" type="checkbox" @if( course.isAvailable(Semester.WINTER, Calendar.getInstance().get(Calendar.YEAR)) == true){checked}>Winter</td>
-        <td><input name="offeredOnline[2]"
- value="Spring" type="checkbox" @if( course.isAvailable(Semester.SPRING, Calendar.getInstance().get(Calendar.YEAR)) == true){checked}>Spring</td>
-        <td><input name="offeredOnline[3]"
- value="Summer1" type="checkbox" @if( course.isAvailable(Semester.SUMMER1, Calendar.getInstance().get(Calendar.YEAR)) == true){checked}>Summer I</td>
-        <td><input name="offeredOnline[4]"
- value="Summer2" type="checkbox" @if( course.isAvailable(Semester.SUMMER2, Calendar.getInstance().get(Calendar.YEAR)) == true){checked}>Summer II</td>
+        <td><input name="offeredOnline[0]" value="Fall" type="checkbox" @if( course.isAvailable(Semester.FALL, null) == true && (course.getLocation(Semester.FALL, null) == Course.Location.ONLINE || course.getLocation(Semester.FALL, null) == Course.Location.BOTH)){checked}></td>
+        <td><input name="offeredOnline[1]" value="Winter" type="checkbox" @if( course.isAvailable(Semester.WINTER, null) == true && (course.getLocation(Semester.WINTER, null) == Course.Location.ONLINE || course.getLocation(Semester.WINTER, null) == Course.Location.BOTH)){checked}></td>
+        <td><input name="offeredOnline[2]" value="Spring" type="checkbox" @if( course.isAvailable(Semester.SPRING, null) == true && (course.getLocation(Semester.SPRING, null) == Course.Location.ONLINE || course.getLocation(Semester.SPRING, null) == Course.Location.BOTH)){checked}></td>
+        <td><input name="offeredOnline[3]" value="Summer I" type="checkbox" @if( course.isAvailable(Semester.SUMMER1, null) == true && (course.getLocation(Semester.SUMMER1, null) == Course.Location.ONLINE || course.getLocation(Semester.SUMMER1, null) == Course.Location.BOTH)){checked}></td>
+        <td><input name="offeredOnline[4]" value="Summer II" type="checkbox" @if( course.isAvailable(Semester.SUMMER2, null) == true && (course.getLocation(Semester.SUMMER2, null) == Course.Location.ONLINE || course.getLocation(Semester.SUMMER2, null) == Course.Location.BOTH)){checked}></td>
       </tr>
       <tr>
         <td style="text-align: left;">Prereqs:</td>
-        <td style="text-align: left;" colspan="2"><input type="text" name="prereqEquation" colspan="2" value="@prereq"></td>
+        <td style="text-align: left;" colspan="5"><input type="text" name="prereqEquation" colspan="5" size="50" value="@Converter.convertPreCorReq(course.getPreRequisite())"></td>
+        </tr><td></td>
+        <td colspan="5">The boolean equation for the Prerequisites for the course ie.:<br>
+        CS115 AND(CS155 OR CS165) List of courses under the form for reference.</td>
        </tr>
       <tr>
         <td style="text-align: left;">Coreqs:</td>
-        <td style="text-align: left;" colspan="2"><input type="text" name="coreqEquation" colspan="2" value="@coreq"></td>
+        <td style="text-align: left;" colspan="5"><input type="text" name="coreqEquation" colspan="5" size="50" value="@Converter.convertPreCorReq(course.getCoRequisite())"></td>
+        </tr><td></td>
+        <td colspan="5">The boolean equation for the Corequisites the same as Prerequisite.</td>
         </tr>
-        <td colspan="6" align="center"><input
- type="submit"></td>
+        <td colspan="5" align="center"><input type="submit" value="Submit"></td>
         <td></td>
       </tr>
     </tbody>
+  </table>
+  </td><td>
+  <div style="overflow:auto;height:700px;">
+  <font color="#C8C8C8" size="2">
+  <h3>Courses Reference</h3>
+    <table>
+    <tr><td>Title</td><td>CourseNumber</td></tr>
+  @for(c <- Course.getAll()){
+	<tr>					
+		<td>@c.getTitle()</td>
+		<td>@c.toString()</td>
+	</tr>
+	}
+  </table>
+  </font>
+  </div>
+  </td></tr>
   </table>
   <div style="text-align: center;"></div>
 </form>

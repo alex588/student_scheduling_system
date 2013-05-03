@@ -1,46 +1,117 @@
 @(courseGroupForm: Form[views.forms.CourseGroupForm])
+@import model.CourseGroup
+@import model.Course;
 
-@admin("Course Add") {
-    <div id="breadcrumbs"><a href="/">Home</a>
-&gt; <a href="/course-groups/">Course Groups</a>
+@admin("Course Group Add") {
+    <div id="breadcrumbs"><a href="/course-groups/">Course Groups</a>
 &gt; <a href="">Course Group Add</a><br>
 <br>
 <br>
 </div>
-<div id="content">
+<script language="JavaScript">
+function test(){
+if(document.getElementById('simple').checked) {
+	document.getElementById('coursegroup').value = "";
+	document.getElementById('coursegroup').disabled = true;
+	document.getElementById('course').disabled = false;
 
-  <table border="0">
+}else if(document.getElementById('complex').checked) {
+	document.getElementById('course').disabled = true;
+	document.getElementById('coursegroup').disabled = false;
+	document.getElementById('course').value = "";
+  
+}
+}
+
+function validate(){
+	var name=document.getElementById('name').value;
+	var simple = document.getElementById('simple').checked;	
+	var complex = document.getElementById('complex').checked;
+	var cg = document.getElementById('coursegroup').value;
+	var c =document.getElementById('course').value;
+	
+	if (name==null || name==""){
+	  alert("Name cannot be blank");
+	  return false;
+	  }
+	
+	if(simple && c==""){
+	 alert("List of Courses cannot be blank");
+	return false;	
+	}
+
+	if(complex && cg==""){
+	 alert("Combination cannot be blank");
+	 return false;
+	}
+
+
+}
+</script>
+<div id="content">
+<table>
+<tr><td valign="top">
+  <table border="0" width="700">
     <tbody>
-      <form name="courseGroupForm" action="/courseGroups/add/"
- method="post">
+      <form name="courseGroupForm" action="/course-groups/"
+ method="post" onSubmit="return validate()">
        <tr>
         <td>Name:</td>
-        <td colspan="1"><input size="30" name="name"></td>
+        <td colspan="1"><input size="30" name="name" id="name"></td>
+        </tr><td></td>
+        <td colspan="5">Name of the new Course Group</td>
       </tr>
       <tr>
-        <td>Description:</td>
-        <td colspan="1"><input size="30" name="description"></td>
+        <td><input name="groupType" id="simple" value="courseList" type="radio" CHECKED onClick="test();">List of Courses</td>
+        <td colspan="1"><input type=text name="courseNumbers" id="course" size="30"</td>
+        </tr><td></td>
+        <td colspan="5">Course Numbers in the Course Group separated by commas ie.:<br>
+         CS115, CS225, CS135</td>
       </tr>
       <tr>
-        <td><input name="groupType" value="courseList"
- type="radio">List of Courses</td>
-        <td colspan="1"><input type=text name="courseNumbers" size="30"</td>
+        <td "><input name="groupType" id="complex" value="groupList" type="radio" onClick="test();">Combination of Groups</td>
+        <td "><input size="60" name="groupComboBool" id="coursegroup" disabled></td>
+        </tr><td></td>
+        <td colspan="5">Boolean equation made with Course Group Abbreviations ie.:<br>
+        HUM01 AND HUM02</td>
       </tr>
       <tr>
-        <td "><input
- name="groupType" value="groupList" type="radio">Combination
-of Groups</td>
-        <td "><input size="60"
- name="groupComboBool"></td>
-      </tr>
-      <tr>
-        <td colspan="3" align="center"><input
- type="submit"></td>
+        <td colspan="3" align="center"><input type="submit"></td>
       </tr>
     </tbody>
   </table>
+  </td><td>
+  <div style="overflow:auto;height:700px;">
+  <font color="#C8C8C8" size="2">
+  <h3>Course Group Reference<h3>
+  <table>
+  <tr><td>Abbreviation</td><td>Title</td></tr>
+  @for(c <- CourseGroup.getAll()){
+    <tr>
+        <td>@c.toString()</td>
+        <td>@c.getTitle()</td>
+    </tr>
+	}
+  </table>
+    <font color="#C8C8C8" size="2">
+  <h3>Courses Reference</h3>
+  <table>
+  	<tr><td>CourseNumber</td><td>Title</td></tr>
+	  @for(c <- Course.getAll()){
+		<tr>					
+			<td>@c.toString()</td>
+			<td>@c.getTitle()</td>		
+		</tr>
+		}
+  </table>
+  </font>
+  </div>
+  </td></tr>
+  <table>
+  </font>
   <div style="text-align: center;"></div>
 </form>
+
 </div>
     
 }

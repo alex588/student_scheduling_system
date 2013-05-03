@@ -4,113 +4,111 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
 import play.db.ebean.Model;
-import play.db.ebean.Model.Finder;
-@Entity
-@Table(name="requirements")
-public class ERequirement extends Model {
 
-	/**
-	 * 
-	 */
+/**
+ * 
+ * @author Mihir Daptardar
+ * 
+ */
+@Entity
+@Table(name = "requirements")
+public class ERequirement extends Model {
 	private static final long serialVersionUID = 1L;
 	@Id
-	@Column(name="req_id_pk")
-	public Integer req_id;
-	
-	public Boolean req_is_simple;
-	public String req_title;
-	public Integer req_number_of_courses;
-	public Boolean req_is_visible;
-	public String req_junction_type;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="req_cg_id_fk")
-	public ECourseGroup courseGroup;
+	@Column(name = "req_id_pk")
+	private Integer id;
+	@Column(name = "req_is_simple")
+	private Boolean isSimple;
+	@Column(name = "req_title")
+	private String title;
+	@Column(name = "req_abbr")
+	private String abbreviation;
+	@Column(name = "req_number_of_courses")
+	private Integer numberOfCourses;
+	@Column(name = "req_is_visible")
+	private Boolean isVisible;
+	@Column(name = "req_junction_type")
+	private String junction;
+	@ManyToOne
+	@JoinColumn(name = "req_cg_id_fk")
+	private ECourseGroup courseGroup;
+	@OneToMany(mappedBy = "child")
+	private List<ERequirementFormula> parents;
+	@OneToMany(mappedBy = "parent")
+	private List<ERequirementFormula> children;
 
-	@OneToMany(mappedBy="child")
-	public List<ERequirementFormula> parents;
-	
-	@OneToMany(mappedBy="parent")
-	public List<ERequirementFormula> children;
-	
-	public void addChild(ERequirement child, boolean isPositive){
+	public void addChild(ERequirement child, boolean isPositive) {
 		ERequirementFormula formula = new ERequirementFormula();
 		formula.setChild(child);
 		formula.setParent(this);
-		formula.setRf_is_positive(isPositive);
+		formula.setIsPositive(isPositive);
 		formula.save();
-		
-		this.refresh();
-		child.refresh();		
+		this.children.add(formula);
+		this.update();
+		child.parents.add(formula);
+		child.update();
 	}
-	
-	public void addParent(ERequirement parent, boolean isPositive){
+
+	public void addParent(ERequirement parent, boolean isPositive) {
 		ERequirementFormula formula = new ERequirementFormula();
 		formula.setChild(this);
 		formula.setParent(parent);
-		formula.setRf_is_positive(isPositive);
+		formula.setIsPositive(isPositive);
 		formula.save();
-		
-		this.refresh();
-		parent.refresh();
-	}
-	
-	public static Finder<Long, ERequirement> find = new Finder<Long, ERequirement>(Long.class, ERequirement.class);
-
-	public Integer getReq_id() {
-		return req_id;
+		this.parents.add(formula);
+		this.update();
+		parent.children.add(formula);
+		parent.update();
 	}
 
-	public Boolean getReq_is_simple() {
-		return req_is_simple;
+	public Integer getId() {
+		return id;
 	}
 
-	public String getReq_title() {
-		return req_title;
+	public Boolean isSimple() {
+		return isSimple;
 	}
 
-	public Integer getReq_number_of_courses() {
-		return req_number_of_courses;
+	public String getTitle() {
+		return title;
 	}
 
-	public Boolean getReq_is_visible() {
-		return req_is_visible;
+	public Integer getNumberOfCourses() {
+		return numberOfCourses;
 	}
 
-	public String getReq_junction_type() {
-		return req_junction_type;
+	public Boolean isVisible() {
+		return isVisible;
 	}
 
-	public void setReq_id(Integer req_id) {
-		this.req_id = req_id;
+	public String getJunction() {
+		return junction;
 	}
 
-	public void setReq_is_simple(Boolean req_is_simple) {
-		this.req_is_simple = req_is_simple;
+	public void setIsSimple(Boolean isSimple) {
+		this.isSimple = isSimple;
 	}
 
-	public void setReq_title(String req_title) {
-		this.req_title = req_title;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
-	public void setReq_number_of_courses(Integer req_number_of_courses) {
-		this.req_number_of_courses = req_number_of_courses;
+	public void setNumberOfCourses(Integer numberOfCourses) {
+		this.numberOfCourses = numberOfCourses;
 	}
 
-	public void setReq_is_visible(Boolean req_is_visible) {
-		this.req_is_visible = req_is_visible;
+	public void setIsVisible(Boolean isVisible) {
+		this.isVisible = isVisible;
 	}
 
-	public void setReq_junction_type(String req_junction_type) {
-		this.req_junction_type = req_junction_type;
+	public void setJunction(String junction) {
+		this.junction = junction;
 	}
 
 	public ECourseGroup getCourseGroup() {
@@ -137,6 +135,12 @@ public class ERequirement extends Model {
 		this.children = children;
 	}
 
-	
-	
+	public String getAbbreviation() {
+		return abbreviation;
+	}
+
+	public void setAbbreviation(String abbreviation) {
+		this.abbreviation = abbreviation;
+	}
+
 }

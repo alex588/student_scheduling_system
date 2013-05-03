@@ -1,0 +1,79 @@
+This instruction explains how to deploy the project from project archive (not binary)
+=====================================================================================
+
+Prerequisites
+
+To run the Student Scheduling System, you need:
+1. JDK 6 or later (for JDK 7 see installation instructions here: http://docs.oracle.com/javase/7/docs/webnotes/install/index.html ).
+2. MySQL sever v5 or later (see installation instructions here: http://dev.mysql.com/downloads/mysql/ )
+3. play framework v2 or later (see installation instructions here: http://www.playframework.com/documentation/2.0.4/Installing or you can find the same instruction in Installing Play.txt)
+
+
+Deploying on the Lunux/Unix server
+
+1. unzip the project archive in the desired directory (current directory by default):
+unzip ./student_scheduling_system_v1.x.zip
+
+2. deploy DB:
+2.1 set URL, user name and password of MySQL server in the  student_scheduling_system/application.conf:
+
+db.default.url = "jdbc:mysql://localhost/student_scheduling_system"
+db.default.user = root
+db.default.pass = ""
+
+2.2 erase existing instance of DB (optional):
+./student_scheduling_system/db/db_drop_schema.sh 
+
+2.3 initialize DB schema:
+./student_scheduling_system/db/db_schema.sh 
+
+2.4 initial DB filling:
+./student_scheduling_system/db/db_init_values.sh
+
+3. change directory to the project folder:
+cd ./student_scheduling_system
+
+4. run play (make sure you have updated your PATH environment variable, so that play directory is there):
+play
+
+5. now in play console type:
+start 8080
+where 8080 - is a port number. You can use any available port number.
+
+After that application should be available here: http://yourhostname:8080/
+where 'yourhostname' is your server's name or IP address.
+
+
+Deploying on the Windows server
+
+1. unzip the project archive student_scheduling_system_v1.x.zip in the desired directory.
+
+2. deploy DB:
+2.1 set URL, user name and password of MySQL server in the  student_scheduling_system/application.conf:
+
+db.default.url = "jdbc:mysql://localhost/student_scheduling_system"
+db.default.user = root
+db.default.pass = ""
+
+2.2 erase existing instance of DB (optional):
+student_scheduling_system/db/db_drop_schema.bat
+
+2.3 initialize DB schema:
+student_scheduling_system/db/db_schema.bat
+
+2.4 initial DB filling:
+student_scheduling_system/db/db_init_values.bat
+
+3. change directory to the project folder:
+cd student_scheduling_system
+
+4. run play (make sure you have updated your PATH environment variable, so that play directory is there):
+play
+
+5. now in play console type:
+start 8080
+where 8080 - is a port number. You can use any available port number.
+
+After that application should be available here: http://yourhostname:8080/
+where 'yourhostname' is your server's name or IP address.
+

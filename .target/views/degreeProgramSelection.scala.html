@@ -1,30 +1,46 @@
 @(selectedDegreeForm: Form[views.forms.SelectedDegreeForm])
+@import model.DegreeProgram;
 
 @main("Student Degree Selection") {
-	<div id="breadcrumbs">
-    	<a href="/">Home</a> > <a href="/student-degree-programs/">Degree Selection</a><br>
-	</div>
+<div id="breadcrumbs">
+	<a href="/">Home</a> > <a href="/student-degree-programs/">Degree Selection</a><br>
+</div>
 	
-	<div id="degreeForm">
-		<p>
-			Degree Selection<br>
-			<form name="selectedDegreeForm" action="/student-degree-programs/" method="post">
-			<p>
-				Desired Degree:
-				<select>
-					<option value="0">Computer Science CS105</option>
-					<option value="1">Computer Science CS115</option>
-					<option value="2">Computer Security</option>
-				</select><br>
-				Year of Entry(Degree Catalog Year): <input type="text" name="degreeYear"><Br>
-				(ie. I entered my degree in 2008)<br>
-				Desired Number of Semesters: <input type="text" name="semesterNum"><Br>
-				(ie. I want to graduate in 8 more semesters)<br>
-				<input type="submit">
-			</p>
-			</form>
-		</p>
-	</div>
+<div id="degreeForm">
+	Degree Selection
+	<form name="selectedDegreeForm" action="/student-degree-programs/" method="post">
+	<table>
+		<tr>
+			<td>Desired Degree:</td>
+			<td><select name="degreeId">
+					@for(d <- DegreeProgram.getAll()){
+						<option value="@d.getId()">@d.getName()</option>
+					}
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td></td><td>The degree program that you want.</td>
+		</tr>
+		<tr>
+			<td>Year of Entry(Degree Catalog Year):</td>
+			<td><input type="text" name="enterYear"></td>
+		</tr>
+		<tr>
+			<td></td><td>The year you entered school.</td>
+		</tr>
+		<tr>
+			<td>Desired Number of Semesters:</td>
+			<td><input type="text" name="numberOfSemesters"></td>
+		</tr>
+		<tr>
+			<td></td><td>The number of semesters you want to attend school</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="middle"><input type="submit"></td>
+		</tr>
+	</form>
+</div>
     
     
 }

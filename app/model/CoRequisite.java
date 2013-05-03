@@ -1,33 +1,53 @@
 package model;
 
-import java.util.List;
-
 import model.entities.EPrereqCoreqFormula;
 
+/**
+ * @author Mihir Daptardar
+ */
 public class CoRequisite extends Requisite {
 
-	protected CoRequisite(Requisite parent, Junction junction,
-			Boolean pcf_is_course, Course course, Boolean pcf_is_positive) {
-		super(parent, junction, pcf_is_course, course, pcf_is_positive);
-		// TODO Auto-generated constructor stub
+	private CoRequisite() {
+		super();
 	}
 
-	public List<PreRequisite> getChildren(){
-		return null;
+	private CoRequisite(Requisite parent, Junction junction, Boolean isCourse,
+			Course course, Boolean isPositive) {
+		super(parent, junction, isCourse, course, isPositive);
 	}
-	
-	public static CoRequisite createNode(Boolean isPositive, CoRequisite parent, Junction junction){
-		CoRequisite newNode = new CoRequisite(parent, junction, false, null, isPositive);
+
+	public static CoRequisite createNode(Boolean isPositive,
+			CoRequisite parent, Junction junction) {
+		if (junction == null)
+			throw new IllegalArgumentException(
+					"Junction is null. Junction cannot be null in the intermediate node.");
+		CoRequisite newNode = new CoRequisite(parent, junction, false, null,
+				isPositive);
 		return newNode;
 	}
 
-	public static CoRequisite createLeaf(Boolean isPositive, CoRequisite parent, Course course){
-		CoRequisite newLeaf = new CoRequisite(parent, null, true, course, isPositive);
-		return newLeaf; 
+	public static CoRequisite createLeaf(Boolean isPositive,
+			CoRequisite parent, Course course) {
+		CoRequisite newLeaf = new CoRequisite(parent, null, true, course,
+				isPositive);
+		return newLeaf;
 	}
 
-	static EPrereqCoreqFormula unwrap(CoRequisite prereq){
+	static EPrereqCoreqFormula unwrap(CoRequisite prereq) {
 		return prereq == null ? null : prereq.entity;
 	}
-	
+
+	@Override
+	protected Requisite innerWrap(EPrereqCoreqFormula entity) {
+		CoRequisite coreq = new CoRequisite();
+		coreq.entity = entity;
+		return coreq;
+	}
+
+	static CoRequisite wrap(EPrereqCoreqFormula entity) {
+		CoRequisite coreq = new CoRequisite();
+		coreq.entity = entity;
+		return coreq;
+	}
+
 }

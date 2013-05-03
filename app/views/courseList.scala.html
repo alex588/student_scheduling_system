@@ -1,13 +1,47 @@
 
 @import model.Course
 @import model.Prefix
+@import controllers.util.Converter;
 
 @admin("Course List") {
-
+<script>
+function disp_confirm(id)
+{
+	var r=confirm("Do you want to continue and delete this?" )
+	if (r==true)
+ 	 {	  
+		  $.ajax({
+                url: '/courses/'+id,
+                type: 'DELETE',
+                success: function(result) {
+                	location.reload(true);
+                }
+            });
+ 	 }
+	else
+	  {
+	   	 	  var myForm = document.createElement("form");
+		  myForm.method="POST" ;
+		  myForm.action = "/courses/delete-request/" + id;
+		  document.body.appendChild(myForm) ;
+		  myForm.submit() ;
+		  document.body.removeChild(myForm) ;
+	  }
+}
+function disp_confirm_edit(id)
+{
+  var myForm = document.createElement("form");
+  myForm.method="GET" ;
+  myForm.action = "/courses/edit-course-page/" + id;
+  document.body.appendChild(myForm) ;
+  myForm.submit() ;
+  document.body.removeChild(myForm) ;
+}
+</script>
 
 
     <div id="breadcrumbs">
-    	<a href="/">Home</a> > <a href="">Courses</a><br>
+<a href="">Courses</a><br>
 	</div>
 	<div id="content">
 		<div id="courseList">
@@ -26,17 +60,17 @@
 				</tr>
 				@for(c <- Course.getAll()){
 					<tr>					
-						<td><a href="/courses/editPage/@c.getId()" class="popup2">Edit</a></td>
-						<td>Form</td>
+						<td><input type="button" onclick="disp_confirm_edit(@c.getId())" value="Edit"></td>
+						<td><input type="button" onclick="disp_confirm(@c.getId())" value="Delete"></td>
 						<td>@for(p <- Prefix.getAll()){
-							@if(p.getId() == c.getPrefixId()){
+							@if(p.getId() == c.getPrefix().getId()){
 								@p.getName()@c.getCourseNo()
 							}
 						}</td>
 						<td>@c.getTitle()</td>
 						<!-- replace getId with getPrereq() and getCoreq()-->
-						<td>@c.getId()</td>
-						<td>@c.getId()</td>
+						<td>@Converter.convertPreCorReq(c.getPreRequisite())</td>
+						<td>@Converter.convertPreCorReq(c.getCoRequisite())</td>
 						<td>@c.getCredits()</td>
 					</tr>
 				}

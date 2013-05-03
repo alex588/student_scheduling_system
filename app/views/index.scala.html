@@ -2,24 +2,37 @@
 
 
 @main("Student Scheduling System Login"){
-	<div id="LoginBox" style="background-color:#B0B0B0;padding-left:300px;padding-top:150px;"
+	<div id="LoginBox" style="height:800px;padding-left:300px;padding-top:150px;"
 		<!-- Regular HTML -->
-		<form name="loginForm" action="login/" method="post">
+		<form name="loginForm" action="login/" method="post" onsubmit="return validateForm()">
 		<table>
 			<tr>
 				<td></td><td colspan="2">Login</td>
 			</tr>
 	  		<tr>
 	  			<td>Login:</td>
-	  			<td><input type="text" name="login"></td>
+	  			<td><input type="text" name="login" id="username"></td>
   			</tr>
   			<tr>
 	  			<td>Password:</td>
-	  			<td><input type="password" name="password"></td>
+	  			<td><input type="password" name="password" id="pwd"></td>
   			</tr>
   			<tr>
 	  			<td></td><td colspan="2"><input type="submit"></td>
   			</tr>
 	 	</form> 	
+	 	<script>
+			function validateForm()
+			{
+			var username=document.getElementById('username').value;
+			var password=document.getElementById('pwd').value;
+			if (username==null || username=="" || password==null || password=="")
+			  {
+			  alert("Username AND/OR password cannot be blank");
+			  return false;
+			  }
+			}
+
+</script>
  	</div>
  }

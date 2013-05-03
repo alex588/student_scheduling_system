@@ -1,8 +1,12 @@
 package model;
 
+/**
+ * @author Mihir Daptardar
+ * 
+ */
 public class RequirementFormulaNode {
 	private Requirement req;
-	boolean isPositive;
+	private Boolean isPositive;
 	
 	RequirementFormulaNode(Requirement req, boolean isPositive) {
 		super();
@@ -14,7 +18,7 @@ public class RequirementFormulaNode {
 		return req;
 	}
 
-	public boolean isPositive() {
+	public Boolean isPositive() {
 		return isPositive;
 	}
 

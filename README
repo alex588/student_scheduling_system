@@ -1,4 +1,121 @@
-This is your new Play 2.0 application
+This is Student Scheduling System 
 =====================================
 
+This file contains:
+1. Instruction how to create a binary distributive
+2. Instructions how to deploy the application from binary distribution (no Play installed required).    
+3. description of each package, description of package dependencies, naming and architectural conventions in the project.
+
+See also 
+1. instructions how to deploy the project from project archive (not binary) in '/doc/how to deploy application.txt'
+2. how to install Play framework: /doc/Installing Play.txt
+
+
+Binary distributive creation
+============================
+
+1. set URL, user name and password of MySQL server in the  student_scheduling_system/application.conf:
+db.default.url = "jdbc:mysql://localhost/student_scheduling_system"
+db.default.user = root
+db.default.pass = ""
+and other configuration parameters if needed.  
+
+2. in command line in project foler run:
+play dist
+
+3. find your distributive in /dist folder.
+
+
+
+Application deployment from binary distribution
+===============================================
+
+Prerequisites
+-------------
+To run the Student Scheduling System, you need:
+1. JDK 6 or later (for JDK 7 see installation instructions here: http://docs.oracle.com/javase/7/docs/webnotes/install/index.html ).
+2. MySQL sever v5 or later (see installation instructions here: http://dev.mysql.com/downloads/mysql/ )
+
+Deployment
+----------
+1. unzip binary project distribution in the desired directory (current directory by default):
+unzip ./student_scheduling_system_bin_v1.x.zip
+2. run:
+./student_scheduling_system-1.0-SNAPSHOT/start
+
+Note
+----
+Binary distributive is created by 'play dist' command, and it implies that appropriate /application.conf file provided in the project.
+In other word, such configuration parameters as DB URL, user name and password of MySQL server must be set for the target server before distributive created by 'play dist' command.
+   
+
+
+
+Packages
+=========
+
+
+Package: controllers.admin
+--------------------------	
+Contains controllers responsible for user account management. For example, it has a controller that updates admins’ or users’ passwords. In the future all account management related controllers (new user creation, user role change) should be implemented in this package.
+controllers.auth	Contains classes responsible for user authentication and user authorization check. For example, AuthCheckSecurity  - it checks if user is authenticaticated in the system. 
+This package also has LoginController, which is responsible for login page, login and logout actions.
+
+
+
+Package: controllers.constructors	
+--------------------------	
+Contains controllers responsible for creation/modification of the following business objects: 
+•	Courses
+•	Course groups
+•	Requirements 
+•	Degree programs
+•	Study plans
+All the controllers use business objects from model package to perform their functions. Direct usage classes from model.entities is strictly prohibited. That would violate tree-tier architecture pattern.
+controllers.solver	Contains classes responsible for constraint solver implementation. For example, ConstraintProcessor which has method solve(). Another important class is StudyPlanMatrix. It contains all the constraints and intermediate state of the partial solution during backtracking.
+controllers.util	Contains utility classes used in various controllers. For example, Converter – responsible for parsing Boolean formulas and converting them in to appropriate business object trees.
+
+
+
+Package: model
+--------------------------	
+Contains classes for business objects such as
+•	Course
+•	Course group
+•	Requirement 
+•	Degree program
+•	PreRequisite
+•	CoRequisite
+•	Study plan
+•	Term
+
+
+
+Package: model.entities
+--------------------------	
+Contains classes from Data Access Layer. Each class there is Data Access Object entity, which is mapped to DB entity. Every class in this package must have name starting with capital E (E stands for entity). For example:
+•	ECourse
+•	ECourseGroup
+•	ERequirement
+•	EDegreeProgram
+•	EPrefix
+These classes should have only mapping to DB entities. No business logic is implemented here.
+
+
+
+Package: views
+--------------------------	
+This package contains html templates. Each page is a view. These pages are not JavaScript intensive. JavaScript is used only for user input validation and for sending ajax delete/put http requests. These requests are sent via jQuery Ajax request. JavaScript functions are located in /public/javascripts folder.
+
+
+
+Package: views.forms
+--------------------------	
+This package contains classes responsible for html forms. They represent html form data. This package is used by controllers package.
+
+
+
+
+
+--
 This file will be packaged with your application, when using `play dist`.

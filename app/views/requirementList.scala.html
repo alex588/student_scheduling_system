@@ -1,8 +1,36 @@
 @import model.Requirement
 
 @admin("Course List") {
+<script>
+function disp_confirm(id)
+{
+	var r=confirm("Do you want to continue and delete this?" )
+	if (r==true)
+ 	 {
+		  $.ajax({
+                url: '/requirements/'+id,
+                type: 'DELETE',
+                success: function(result) {
+                	location.reload(true);
+                }
+            });
+ 	 }
+	else
+	  {
+	  }
+}
+function disp_confirm_edit(id)
+{
+  var myForm = document.createElement("form");
+  myForm.method="GET" ;
+  myForm.action = "/requirements/edit-requirement-page/" + id;
+  document.body.appendChild(myForm) ;
+  myForm.submit() ;
+  document.body.removeChild(myForm) ;
+}
+</script>
     <div id="breadcrumbs">
-    	<a href="/">Home</a> > <a href="/requirements/">Requirements</a><br>
+<a href="/requirements/">Requirements</a><br>
 	</div>
 	<div id="content">
 		<div id="requirementList">
@@ -12,13 +40,15 @@
 				<tr>
 					<td>Edit</td>
 					<td>Delete</td>
+					<td>Abbreviation</td>
 					<td>Requirement</td>
 				</tr>
-				@for(c <- Requirement.getAll()){
+				@for(c <- Requirement.getAllVisible()){
 					<tr>
-						<td><a href="/requirements/edit/c.getId()">Edit</a></td>
-						<td>form </td>
-						<td>c.getName()</td>
+						<td><input type="button" onclick="disp_confirm_edit(@c.getId())" value="Edit"></td>
+						<td><input type="button" onclick="disp_confirm(@c.getId())" value="Delete"></td>
+						<td>@c.toString()</td>
+						<td>@c.getTitle()</td>
 					</tr>
 				}
 			</table>

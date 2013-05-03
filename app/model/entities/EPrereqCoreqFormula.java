@@ -1,84 +1,68 @@
 package model.entities;
 
 import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
 import play.db.ebean.Model;
-import play.db.ebean.Model.Finder;
 
+/**
+ * 
+ * @author Mihir Daptardar
+ * 
+ */
 @Entity
 @Table(name = "prereq_coreq_formulas")
 public class EPrereqCoreqFormula extends Model {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-
 	@Id
 	@Column(name = "pcf_id_pk")
-	public Integer pcf_id;
-
-	@ManyToOne(fetch = FetchType.LAZY)
+	private Integer id;
+	@ManyToOne
 	@JoinColumn(name = "pcf_parent_id_fk")
-	public EPrereqCoreqFormula parent;
-
+	private EPrereqCoreqFormula parent;
 	@OneToMany(mappedBy = "parent")
-	public List<EPrereqCoreqFormula> children;
-
-	public String pcf_junction_type;
-	public Boolean pcf_is_course;
-
-	@ManyToOne(fetch = FetchType.LAZY)
+	private List<EPrereqCoreqFormula> children;
+	@Column(name = "pcf_junction_type")
+	private String junction;
+	@Column(name = "pcf_is_course")
+	private Boolean isCourse;
+	@ManyToOne
 	@JoinColumn(name = "pcf_course_id_fk")
-	public ECourse course;
+	private ECourse course;
+	@Column(name = "pcf_is_positive")
+	private Boolean isPositive;
 
-	public Boolean pcf_is_positive;
-
-	public static Finder<Long, EPrereqCoreqFormula> find = new Finder<Long, EPrereqCoreqFormula>(
-			Long.class, EPrereqCoreqFormula.class);
-
-	public Integer getPcf_id() {
-		return pcf_id;
+	public Integer getId() {
+		return id;
 	}
 
-	public String getPcf_junction_type() {
-		return pcf_junction_type;
+	public String getJunction() {
+		return junction;
 	}
 
-	public Boolean getPcf_is_course() {
-		return pcf_is_course;
+	public Boolean isCourse() {
+		return isCourse;
 	}
 
-	
-	public Boolean getPcf_is_positive() {
-		return pcf_is_positive;
+	public Boolean isPositive() {
+		return isPositive;
 	}
 
-	public void setPcf_id(Integer pcf_id) {
-		this.pcf_id = pcf_id;
+	public void setJunction(String junction) {
+		this.junction = junction;
 	}
 
-	public void setPcf_junction_type(String pcf_junction_type) {
-		this.pcf_junction_type = pcf_junction_type;
+	public void setIsCourse(Boolean isCourse) {
+		this.isCourse = isCourse;
 	}
 
-	public void setPcf_is_course(Boolean pcf_is_course) {
-		this.pcf_is_course = pcf_is_course;
-	}
-
-
-	public void setPcf_is_positive(Boolean pcf_is_positive) {
-		this.pcf_is_positive = pcf_is_positive;
+	public void setIsPositive(Boolean isPositive) {
+		this.isPositive = isPositive;
 	}
 
 	public EPrereqCoreqFormula getParent() {
