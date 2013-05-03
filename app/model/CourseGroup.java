@@ -19,7 +19,7 @@ public abstract class CourseGroup {
 
 	public static List<CourseGroup> getAll() {
 		List<ECourseGroup> list = Ebean.find(ECourseGroup.class).findList();
-		List<CourseGroup> courseGroupList = new ArrayList<>(list.size());
+		List<CourseGroup> courseGroupList = new ArrayList<CourseGroup>(list.size());
 
 		for (ECourseGroup ecoursegroup : list) {
 			CourseGroup coursegroup = CourseGroupFactory.wrap(ecoursegroup);
@@ -57,7 +57,7 @@ public abstract class CourseGroup {
 			return eCourseGroupsList.size();
 
 		else {
-			List<String> listOfAbbr = new ArrayList<>();
+			List<String> listOfAbbr = new ArrayList<String>();
 			for (ECourseGroup e : eCourseGroupsList)
 				listOfAbbr.add(e.getAbbreviation());
 			Collections.sort(listOfAbbr);
@@ -119,7 +119,7 @@ public abstract class CourseGroup {
 	public static List<CourseGroup> getAllVisible() {
 		List<ECourseGroup> list = Ebean.find(ECourseGroup.class).where()
 				.eq("cg_is_visible", true).findList();
-		List<CourseGroup> cgList = new ArrayList<>();
+		List<CourseGroup> cgList = new ArrayList<CourseGroup>();
 		for (ECourseGroup eCourseGroup : list) {
 			cgList.add(CourseGroupFactory.wrap(eCourseGroup));
 		}

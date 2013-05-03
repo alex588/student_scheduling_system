@@ -48,7 +48,7 @@ public abstract class Requisite {
 
 	public List<Requisite> getChildren() {
 		entity.refresh();
-		List<Requisite> children = new ArrayList<>(entity.getChildren().size());
+		List<Requisite> children = new ArrayList<Requisite>(entity.getChildren().size());
 		for (EPrereqCoreqFormula child : entity.getChildren())
 			children.add(innerWrap(child));
 		return children;

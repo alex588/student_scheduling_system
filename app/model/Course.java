@@ -50,7 +50,7 @@ public class Course {
 
 	public static List<Course> getAll() {
 		List<ECourse> list = Ebean.find(ECourse.class).findList();
-		List<Course> courseList = new ArrayList<>(list.size());
+		List<Course> courseList = new ArrayList<Course>(list.size());
 
 		for (ECourse ecourse : list) {
 			Course course = new Course();

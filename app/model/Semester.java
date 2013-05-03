@@ -51,7 +51,7 @@ public class Semester {
 
 	public static List<Semester> getAll() {
 		List<ESemester> list = Ebean.find(ESemester.class).findList();
-		List<Semester> semList = new ArrayList<>(list.size());
+		List<Semester> semList = new ArrayList<Semester>(list.size());
 		for (ESemester esemester : list) {
 			Semester semester = new Semester();
 			semester.entity = esemester;

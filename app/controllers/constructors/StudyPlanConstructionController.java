@@ -53,7 +53,7 @@ public class StudyPlanConstructionController extends Controller {
 			List<String> slocation = data.location;
 
 			// Algorithm Standpoint:
-			List<StudentDesire> studentDesireList = new ArrayList<>();
+			List<StudentDesire> studentDesireList = new ArrayList<StudentDesire>();
 			DegreeProgram degreeProgram = DegreeProgram
 					.getById(data.degreeProgramId);
 			Integer enterYear = data.enterYear;

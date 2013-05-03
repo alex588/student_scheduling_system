@@ -38,7 +38,7 @@ public class DegreeProgramsController extends Controller {
 			dp.removeAllRequirements();
 
 			List<String> strReqList = degreeProgramForm.requirementList;
-			List<Requirement> reqList = new ArrayList<>();
+			List<Requirement> reqList = new ArrayList<Requirement>();
 			for (String eachReq : strReqList) {
 				if (eachReq != null) {
 					Requirement req = Requirement.getById(Integer
@@ -108,7 +108,7 @@ public class DegreeProgramsController extends Controller {
 			DegreeProgramForm degreeProgramForm = form.get();
 			String name = degreeProgramForm.name;
 			List<String> strReqList = degreeProgramForm.requirementList;
-			List<Requirement> reqList = new ArrayList<>();
+			List<Requirement> reqList = new ArrayList<Requirement>();
 			for (String eachReq : strReqList) {
 				if (eachReq != null) {
 					Requirement req = Requirement.getById(Integer

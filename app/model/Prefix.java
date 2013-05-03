@@ -15,7 +15,7 @@ public class Prefix {
 
 	public static List<Prefix> getAll() {
 		List<EPrefix> list = Ebean.find(EPrefix.class).findList();
-		List<Prefix> prefixList = new ArrayList<>(list.size());
+		List<Prefix> prefixList = new ArrayList<Prefix>(list.size());
 		for (EPrefix eprefix : list) {
 			Prefix prefix = new Prefix();
 			prefix.entity = eprefix;

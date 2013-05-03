@@ -100,8 +100,8 @@ public class ComplexCourseGroup extends CourseGroup {
 			return courseList;
 		}
 		if (this.getJunction() == Junction.AND) {
-			Set<CourseGroup> positiveSet = new HashSet<>();
-			Set<CourseGroup> negativeSet = new HashSet<>();
+			Set<CourseGroup> positiveSet = new HashSet<CourseGroup>();
+			Set<CourseGroup> negativeSet = new HashSet<CourseGroup>();
 
 			for (CourseGroupFormulaNode eachChild : getChildrenNodes()) {
 				CourseGroup cg = eachChild.getCg();

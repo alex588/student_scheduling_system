@@ -20,7 +20,7 @@ public abstract class Requirement {
 
 	public static List<Requirement> getAll() {
 		List<ERequirement> list = Ebean.find(ERequirement.class).findList();
-		List<Requirement> reqList = new ArrayList<>(list.size());
+		List<Requirement> reqList = new ArrayList<Requirement>(list.size());
 
 		for (ERequirement eRequirement : list) {
 			Requirement requirement;
@@ -37,7 +37,7 @@ public abstract class Requirement {
 	public static List<Requirement> getAllVisible() {
 		List<ERequirement> list = Ebean.find(ERequirement.class).where()
 				.eq("req_is_visible", true).findList();
-		List<Requirement> reqList = new ArrayList<>();
+		List<Requirement> reqList = new ArrayList<Requirement>();
 		for (ERequirement eRequirement : list) {
 			reqList.add(wrap(eRequirement));
 		}
@@ -103,7 +103,7 @@ public abstract class Requirement {
 		if (eRequirementList.size() == 0)
 			return eRequirementList.size();
 		else {
-			List<String> listOfAbbr = new ArrayList<>();
+			List<String> listOfAbbr = new ArrayList<String>();
 			for (ERequirement e : eRequirementList)
 				listOfAbbr.add(e.getAbbreviation());
 			Collections.sort(listOfAbbr);

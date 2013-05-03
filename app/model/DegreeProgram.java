@@ -26,7 +26,7 @@ public class DegreeProgram {
 
 	public static List<DegreeProgram> getAll() {
 		List<EDegreeProgram> list = Ebean.find(EDegreeProgram.class).findList();
-		List<DegreeProgram> degreeList = new ArrayList<>(list.size());
+		List<DegreeProgram> degreeList = new ArrayList<DegreeProgram>(list.size());
 		for (EDegreeProgram edegreeProgram : list) {
 			DegreeProgram degreeProgram = new DegreeProgram();
 			degreeProgram.entity = edegreeProgram;
@@ -66,7 +66,7 @@ public class DegreeProgram {
 	}
 
 	public void removeAllRequirements() {
-		List<ERequirement> eReqList = new ArrayList<>();
+		List<ERequirement> eReqList = new ArrayList<ERequirement>();
 
 		for (ERequirement eRequirement : this.entity.getRequirementList()) {
 			eReqList.add((eRequirement));

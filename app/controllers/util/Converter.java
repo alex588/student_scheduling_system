@@ -796,6 +796,43 @@ public class Converter {
 		StringBuilder temp = new StringBuilder("");
 		// Loop through every character
 		for (int i = 0; i < string.length(); i++) {
+			String symbol = string.substring(i, i + 1);
+			if (symbol.equalsIgnoreCase("(")){
+				// If there is something in temp, then add it to the String
+				// array and clear temp
+				if (temp.length() > 0) {
+					brokenString.add(temp.toString().toUpperCase());
+					temp = new StringBuilder("");
+				}
+				// add this to String array
+				brokenString.add(string.substring(i, i + 1));
+				break;
+			} else if (symbol.equalsIgnoreCase(" ")) {
+				// If there is something in temp, then add it to the String
+				// array and clear temp
+				if (temp.length() > 0) {
+					brokenString.add(temp.toString().toUpperCase());
+					temp = new StringBuilder("");
+				}
+				// Ignore a space
+				break;
+			} else if (symbol.equalsIgnoreCase(")")) {
+				// If there is something in temp, then add it to the String
+				// array and clear temp
+				if (temp.length() > 0) {
+					brokenString.add(temp.toString().toUpperCase());
+					temp = new StringBuilder("");
+				}
+				// add this to String array
+				brokenString.add(string.substring(i, i + 1));
+				break;
+			} else {
+				// This is for course numbers and relationships
+				temp.append(string.substring(i, i + 1));
+				break;
+			}
+			
+			/*
 			switch (string.substring(i, i + 1)) {
 			case "(":
 				// If there is something in temp, then add it to the String
@@ -831,6 +868,7 @@ public class Converter {
 				temp.append(string.substring(i, i + 1));
 				break;
 			}
+			*/
 		}
 		// If temp contains a final string, add it before returning brokenString
 		if (temp.length() > 0) {
@@ -850,7 +888,7 @@ public class Converter {
 
 	public static List<Term> TermGenerator(Integer enterYear,
 			Integer noOfSemester) {
-		List<Term> termL = new ArrayList<>();
+		List<Term> termL = new ArrayList<Term>();
 
 		Semester semInit = Semester.FALL;
 		for (int terms = 0; terms < noOfSemester; terms++) {
